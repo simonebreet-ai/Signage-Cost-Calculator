@@ -3,17 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Signage Cost Calculator</title>
+    <title>Signage Cost Calculator & Estimator</title>
     <style>
         :root {
             --bg-color: #0b0b0b;
-            --card-bg: rgba(22, 22, 22, 0.92);
+            --card-bg: rgba(22, 22, 22, 0.95);
             --input-bg: #1a1a1a;
             --accent-red: #e50914;
             --accent-red-hover: #b80710;
             --text-main: #f5f5f5;
             --text-muted: #a0a0a0;
             --border-color: #2c2c2c;
+            --success-green: #28a745;
         }
 
         * {
@@ -42,7 +43,7 @@
             content: "";
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
-            background: radial-gradient(circle at center, rgba(18, 18, 18, 0.82) 0%, rgba(5, 5, 5, 0.94) 100%);
+            background: radial-gradient(circle at center, rgba(18, 18, 18, 0.85) 0%, rgba(5, 5, 5, 0.96) 100%);
             z-index: -1;
         }
 
@@ -52,7 +53,7 @@
             border-top: 4px solid var(--accent-red);
             border-radius: 12px;
             width: 100%;
-            max-width: 720px;
+            max-width: 850px;
             box-shadow: 0 15px 40px rgba(0, 0, 0, 0.9), 0 0 20px rgba(229, 9, 20, 0.15);
             overflow: hidden;
             backdrop-filter: blur(10px);
@@ -66,7 +67,7 @@
             flex-direction: column;
             align-items: center;
             gap: 10px;
-            background: rgba(15, 15, 15, 0.6);
+            background: rgba(15, 15, 15, 0.8);
         }
 
         .logo-img {
@@ -91,15 +92,17 @@
             display: flex;
             background-color: #121212;
             border-bottom: 1px solid var(--border-color);
+            flex-wrap: wrap;
         }
 
         .tab-btn {
             flex: 1;
+            min-width: 140px;
             padding: 14px;
             background: none;
             border: none;
             color: var(--text-muted);
-            font-size: 1rem;
+            font-size: 0.9rem;
             font-weight: 600;
             cursor: pointer;
             transition: all 0.2s ease;
@@ -150,7 +153,7 @@
         .tab-content {
             display: none;
             padding: 24px;
-            max-height: 80vh;
+            max-height: 75vh;
             overflow-y: auto;
         }
 
@@ -204,7 +207,7 @@
             margin-top: 4px;
         }
 
-        input[type="number"], select {
+        input[type="number"], input[type="text"], select {
             background-color: var(--input-bg);
             border: 1px solid var(--border-color);
             color: var(--text-main);
@@ -216,7 +219,7 @@
             width: 100%;
         }
 
-        input[type="number"]:focus, select:focus {
+        input[type="number"]:focus, input[type="text"]:focus, select:focus {
             border-color: var(--accent-red);
         }
 
@@ -258,6 +261,43 @@
             display: block;
         }
 
+        /* Buttons */
+        .btn-primary {
+            background-color: var(--accent-red);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 6px;
+            font-weight: bold;
+            font-size: 0.95rem;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            width: 100%;
+            transition: background 0.2s;
+            margin-top: 15px;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--accent-red-hover);
+        }
+
+        .btn-danger {
+            background-color: #331111;
+            color: #ff6b6b;
+            border: 1px solid #552222;
+            padding: 6px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            transition: all 0.2s;
+        }
+
+        .btn-danger:hover {
+            background-color: #e50914;
+            color: white;
+        }
+
         /* Output Summary */
         .summary-card {
             background: linear-gradient(135deg, #181818 0%, #0d0d0d 100%);
@@ -280,7 +320,7 @@
             border-top: 1px solid var(--border-color);
             padding-top: 12px;
             margin-top: 12px;
-            font-size: 1.3rem;
+            font-size: 1.2rem;
             font-weight: bold;
             color: var(--text-main);
         }
@@ -289,12 +329,65 @@
             color: var(--accent-red);
         }
 
+        /* Estimate Cart Table */
+        .cart-item {
+            background: #151515;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            padding: 14px;
+            margin-bottom: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .cart-item-details h4 {
+            font-size: 1rem;
+            color: var(--text-main);
+            margin-bottom: 4px;
+        }
+
+        .cart-item-details p {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        .cart-item-price {
+            text-align: right;
+        }
+
+        .cart-item-price .price {
+            font-weight: bold;
+            color: var(--accent-red);
+            font-size: 1.1rem;
+            display: block;
+        }
+
+        .empty-cart {
+            text-align: center;
+            padding: 40px;
+            color: var(--text-muted);
+            font-style: italic;
+        }
+
         @media (max-width: 600px) {
             .form-grid {
                 grid-template-columns: 1fr;
             }
             .form-group.full-width {
                 grid-column: span 1;
+            }
+            .cart-item {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            .cart-item-price {
+                text-align: left;
+                width: 100%;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
             }
         }
     </style>
@@ -311,10 +404,16 @@
     <div class="tab-container">
         <button class="tab-btn active" onclick="switchMainTab('chromadek')">Chromadek</button>
         <button class="tab-btn" onclick="switchMainTab('acm')">ACM Options</button>
+        <button class="tab-btn" onclick="switchMainTab('estimate')">Project Estimate (<span id="cart-count">0</span>)</button>
     </div>
 
     <!-- TAB 1: CHROMADEK -->
     <div id="chromadek" class="tab-content active">
+        <div class="form-group">
+            <label for="ch-name">Item Name / Reference</label>
+            <input type="text" id="ch-name" placeholder="e.g. Main Entrance Board">
+        </div>
+
         <div class="form-grid">
             <div class="form-group">
                 <label for="ch-width">Width (mm)</label>
@@ -326,7 +425,7 @@
             </div>
             <div class="form-group">
                 <label for="ch-qty">Quantity</label>
-                <input type="number" id="ch-qty" placeholder="e.g. 1" min="1" oninput="calculateChromadek()">
+                <input type="number" id="ch-qty" value="1" min="1" oninput="calculateChromadek()">
             </div>
         </div>
 
@@ -412,19 +511,13 @@
                 <span>Aluminium Beading:</span>
                 <span id="ch-beading-cost">R0.00</span>
             </div>
-            <div class="summary-row">
-                <span>Quantity:</span>
-                <span id="ch-qty-display">0</span>
-            </div>
-            <div class="checkbox-group" style="margin-top: 12px; border-top: 1px solid var(--border-color); padding-top: 12px;">
-                <input type="checkbox" id="ch-vat-toggle" onchange="calculateChromadek()">
-                <span>Add 15% VAT</span>
-            </div>
             <div class="summary-row total">
-                <span>Total Estimated Cost:</span>
+                <span>Estimated Total (Excl. VAT):</span>
                 <span class="price" id="ch-total-cost">R0.00</span>
             </div>
         </div>
+
+        <button class="btn-primary" onclick="addItemToEstimate('chromadek')">+ Add Item to Project Estimate</button>
     </div>
 
     <!-- TAB 2: ACM OPTIONS -->
@@ -437,6 +530,11 @@
 
         <!-- SUB-TAB 1: FULL ACM BOARD -->
         <div id="acm-sub-full" class="sub-tab-content active">
+            <div class="form-group">
+                <label for="acm-name">Item Name / Reference</label>
+                <input type="text" id="acm-name" placeholder="e.g. ACM Billboard">
+            </div>
+
             <div class="form-grid">
                 <div class="form-group">
                     <label for="acm-width">Width (mm)</label>
@@ -448,7 +546,7 @@
                 </div>
                 <div class="form-group">
                     <label for="acm-qty">Quantity</label>
-                    <input type="number" id="acm-qty" placeholder="e.g. 1" min="1" oninput="calculateACMFull()">
+                    <input type="number" id="acm-qty" value="1" min="1" oninput="calculateACMFull()">
                 </div>
             </div>
 
@@ -534,23 +632,22 @@
                     <span>Aluminium Beading:</span>
                     <span id="acm-beading-cost">R0.00</span>
                 </div>
-                <div class="summary-row">
-                    <span>Quantity:</span>
-                    <span id="acm-qty-display">0</span>
-                </div>
-                <div class="checkbox-group" style="margin-top: 12px; border-top: 1px solid var(--border-color); padding-top: 12px;">
-                    <input type="checkbox" id="acm-vat-toggle" onchange="calculateACMFull()">
-                    <span>Add 15% VAT</span>
-                </div>
                 <div class="summary-row total">
-                    <span>Total Estimated Cost:</span>
+                    <span>Estimated Total (Excl. VAT):</span>
                     <span class="price" id="acm-total-cost">R0.00</span>
                 </div>
             </div>
+
+            <button class="btn-primary" onclick="addItemToEstimate('acm-full')">+ Add Item to Project Estimate</button>
         </div>
 
         <!-- SUB-TAB 2: ROUTER CUT LETTERS -->
         <div id="acm-sub-router" class="sub-tab-content">
+            <div class="form-group">
+                <label for="router-name">Item Name / Reference</label>
+                <input type="text" id="router-name" placeholder="e.g. Reception Logo Cutout">
+            </div>
+
             <div class="form-group">
                 <label for="router-type">Letter Type</label>
                 <select id="router-type" onchange="calculateACMRouter()">
@@ -570,7 +667,7 @@
                 </div>
                 <div class="form-group">
                     <label for="router-qty">Quantity</label>
-                    <input type="number" id="router-qty" placeholder="e.g. 1" min="1" oninput="calculateACMRouter()">
+                    <input type="number" id="router-qty" value="1" min="1" oninput="calculateACMRouter()">
                 </div>
             </div>
 
@@ -601,24 +698,43 @@
                     <span>Mounting Pins Cost:</span>
                     <span id="router-pins-cost">R0.00</span>
                 </div>
-                <div class="summary-row">
-                    <span>Quantity:</span>
-                    <span id="router-qty-display">0</span>
-                </div>
-                <div class="checkbox-group" style="margin-top: 12px; border-top: 1px solid var(--border-color); padding-top: 12px;">
-                    <input type="checkbox" id="router-vat-toggle" onchange="calculateACMRouter()">
-                    <span>Add 15% VAT</span>
-                </div>
                 <div class="summary-row total">
-                    <span>Total Estimated Cost:</span>
+                    <span>Estimated Total (Excl. VAT):</span>
                     <span class="price" id="router-total-cost">R0.00</span>
                 </div>
+            </div>
+
+            <button class="btn-primary" onclick="addItemToEstimate('acm-router')">+ Add Item to Project Estimate</button>
+        </div>
+    </div>
+
+    <!-- TAB 3: PROJECT ESTIMATE CART -->
+    <div id="estimate" class="tab-content">
+        <h3 style="margin-bottom: 15px; font-size: 1.1rem; text-transform: uppercase; color: var(--text-main);">Project Quotation Items</h3>
+        <div id="cart-items-container">
+            <div class="empty-cart">No signage items added to estimate yet. Configure items in the Chromadek or ACM tabs and click "Add Item".</div>
+        </div>
+
+        <div class="summary-card" id="cart-summary-box" style="display: none;">
+            <div class="summary-row">
+                <span>Subtotal (Excl. VAT):</span>
+                <span id="cart-subtotal">R0.00</span>
+            </div>
+            <div class="checkbox-group" style="margin-top: 12px; border-top: 1px solid var(--border-color); padding-top: 12px;">
+                <input type="checkbox" id="global-vat-toggle" onchange="renderCart()">
+                <span>Add 15% VAT</span>
+            </div>
+            <div class="summary-row total">
+                <span>Grand Total:</span>
+                <span class="price" id="cart-grand-total">R0.00</span>
             </div>
         </div>
     </div>
 </div>
 
 <script>
+    let projectItems = [];
+
     // Main Tab Switcher
     function switchMainTab(tabId) {
         document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
@@ -627,9 +743,20 @@
         if (tabId === 'chromadek') {
             document.querySelectorAll('.tab-btn')[0].classList.add('active');
             document.getElementById('chromadek').classList.add('active');
-        } else {
+            calculateChromadek();
+        } else if (tabId === 'acm') {
             document.querySelectorAll('.tab-btn')[1].classList.add('active');
             document.getElementById('acm').classList.add('active');
+            // Recalculate active ACM sub-tab
+            if(document.getElementById('acm-sub-full').classList.contains('active')) {
+                calculateACMFull();
+            } else {
+                calculateACMRouter();
+            }
+        } else if (tabId === 'estimate') {
+            document.querySelectorAll('.tab-btn')[2].classList.add('active');
+            document.getElementById('estimate').classList.add('active');
+            renderCart();
         }
     }
 
@@ -668,21 +795,19 @@
         return lengthsNeeded * lengthCost;
     }
 
-    // CHROMADEK CALCULATOR
+    // CHROMADEK CALCULATIONS
     function calculateChromadek() {
         const width = parseFloat(document.getElementById('ch-width').value) || 0;
         const height = parseFloat(document.getElementById('ch-height').value) || 0;
-        const qty = parseInt(document.getElementById('ch-qty').value) || 0;
+        const qty = parseInt(document.getElementById('ch-qty').value) || 1;
         const areaSqM = (width * height) / 1000000;
 
         const boardCostUnit = areaSqM * 1250;
 
         let frameCostUnit = 0;
-        const frameEnabled = document.getElementById('ch-frame-toggle').checked;
-        if (frameEnabled) {
+        if (document.getElementById('ch-frame-toggle').checked) {
             const profileCost = parseFloat(document.getElementById('ch-frame-type').value) || 0;
             const reinfCount = parseInt(document.getElementById('ch-reinf-count').value) || 0;
-            
             const wM = width / 1000;
             const hM = height / 1000;
             let frameLinearMeters = (wM * 2) + (hM * 2);
@@ -693,52 +818,50 @@
         }
 
         let polesCostUnit = 0;
-        const polesEnabled = document.getElementById('ch-poles-toggle').checked;
-        if (polesEnabled) {
+        if (document.getElementById('ch-poles-toggle').checked) {
             const poleProfileCost = parseFloat(document.getElementById('ch-pole-type').value) || 0;
             const poleLength = parseFloat(document.getElementById('ch-pole-length').value) || 0;
             const poleQty = parseInt(document.getElementById('ch-poles-qty').value) || 0;
-
-            const totalPoleMeters = poleLength * poleQty;
-            polesCostUnit = calculateSteelCost(totalPoleMeters, poleProfileCost);
+            polesCostUnit = calculateSteelCost(poleLength * poleQty, poleProfileCost);
         }
 
         let beadingCostUnit = 0;
-        const beadingEnabled = document.getElementById('ch-beading-toggle').checked;
-        if (beadingEnabled) {
+        if (document.getElementById('ch-beading-toggle').checked) {
             beadingCostUnit = areaSqM * 100;
         }
 
         const unitTotal = boardCostUnit + frameCostUnit + polesCostUnit + beadingCostUnit;
-        const subTotal = unitTotal * qty;
-        const vatEnabled = document.getElementById('ch-vat-toggle').checked;
-        const finalCost = vatEnabled ? subTotal * 1.15 : subTotal;
+        const totalCost = unitTotal * qty;
 
-        // Update UI
         document.getElementById('ch-area-display').innerText = areaSqM.toFixed(2) + ' m²';
         document.getElementById('ch-board-cost').innerText = 'R' + (boardCostUnit * qty).toFixed(2);
         document.getElementById('ch-frame-cost').innerText = 'R' + (frameCostUnit * qty).toFixed(2);
         document.getElementById('ch-poles-cost').innerText = 'R' + (polesCostUnit * qty).toFixed(2);
         document.getElementById('ch-beading-cost').innerText = 'R' + (beadingCostUnit * qty).toFixed(2);
-        document.getElementById('ch-qty-display').innerText = qty;
-        document.getElementById('ch-total-cost').innerText = 'R' + finalCost.toFixed(2);
+        document.getElementById('ch-total-cost').innerText = 'R' + totalCost.toFixed(2);
+
+        return {
+            name: document.getElementById('ch-name').value.trim() || 'Chromadek Sign',
+            type: 'Chromadek',
+            dimensions: `${width}mm × ${height}mm`,
+            qty: qty,
+            total: totalCost
+        };
     }
 
     // ACM FULL BOARD CALCULATOR
     function calculateACMFull() {
         const width = parseFloat(document.getElementById('acm-width').value) || 0;
         const height = parseFloat(document.getElementById('acm-height').value) || 0;
-        const qty = parseInt(document.getElementById('acm-qty').value) || 0;
+        const qty = parseInt(document.getElementById('acm-qty').value) || 1;
         const areaSqM = (width * height) / 1000000;
 
         const boardCostUnit = areaSqM * 2100;
 
         let frameCostUnit = 0;
-        const frameEnabled = document.getElementById('acm-frame-toggle').checked;
-        if (frameEnabled) {
+        if (document.getElementById('acm-frame-toggle').checked) {
             const profileCost = parseFloat(document.getElementById('acm-frame-type').value) || 0;
             const reinfCount = parseInt(document.getElementById('acm-reinf-count').value) || 0;
-            
             const wM = width / 1000;
             const hM = height / 1000;
             let frameLinearMeters = (wM * 2) + (hM * 2);
@@ -749,35 +872,35 @@
         }
 
         let polesCostUnit = 0;
-        const polesEnabled = document.getElementById('acm-poles-toggle').checked;
-        if (polesEnabled) {
+        if (document.getElementById('acm-poles-toggle').checked) {
             const poleProfileCost = parseFloat(document.getElementById('acm-pole-type').value) || 0;
             const poleLength = parseFloat(document.getElementById('acm-pole-length').value) || 0;
             const poleQty = parseInt(document.getElementById('acm-poles-qty').value) || 0;
-
-            const totalPoleMeters = poleLength * poleQty;
-            polesCostUnit = calculateSteelCost(totalPoleMeters, poleProfileCost);
+            polesCostUnit = calculateSteelCost(poleLength * poleQty, poleProfileCost);
         }
 
         let beadingCostUnit = 0;
-        const beadingEnabled = document.getElementById('acm-beading-toggle').checked;
-        if (beadingEnabled) {
+        if (document.getElementById('acm-beading-toggle').checked) {
             beadingCostUnit = areaSqM * 100;
         }
 
         const unitTotal = boardCostUnit + frameCostUnit + polesCostUnit + beadingCostUnit;
-        const subTotal = unitTotal * qty;
-        const vatEnabled = document.getElementById('acm-vat-toggle').checked;
-        const finalCost = vatEnabled ? subTotal * 1.15 : subTotal;
+        const totalCost = unitTotal * qty;
 
-        // Update UI
         document.getElementById('acm-area-display').innerText = areaSqM.toFixed(2) + ' m²';
         document.getElementById('acm-board-cost').innerText = 'R' + (boardCostUnit * qty).toFixed(2);
         document.getElementById('acm-frame-cost').innerText = 'R' + (frameCostUnit * qty).toFixed(2);
         document.getElementById('acm-poles-cost').innerText = 'R' + (polesCostUnit * qty).toFixed(2);
         document.getElementById('acm-beading-cost').innerText = 'R' + (beadingCostUnit * qty).toFixed(2);
-        document.getElementById('acm-qty-display').innerText = qty;
-        document.getElementById('acm-total-cost').innerText = 'R' + finalCost.toFixed(2);
+        document.getElementById('acm-total-cost').innerText = 'R' + totalCost.toFixed(2);
+
+        return {
+            name: document.getElementById('acm-name').value.trim() || 'ACM Full Board',
+            type: 'ACM Full Board',
+            dimensions: `${width}mm × ${height}mm`,
+            qty: qty,
+            total: totalCost
+        };
     }
 
     // ACM ROUTER CUT LETTERS CALCULATOR
@@ -785,29 +908,112 @@
         const rate = parseFloat(document.getElementById('router-type').value) || 2050;
         const width = parseFloat(document.getElementById('router-width').value) || 0;
         const height = parseFloat(document.getElementById('router-height').value) || 0;
-        const qty = parseInt(document.getElementById('router-qty').value) || 0;
+        const qty = parseInt(document.getElementById('router-qty').value) || 1;
         const areaSqM = (width * height) / 1000000;
 
         const materialCostUnit = areaSqM * rate;
 
         let pinsCostUnit = 0;
-        const pinsEnabled = document.getElementById('router-pins-toggle').checked;
-        if (pinsEnabled) {
+        if (document.getElementById('router-pins-toggle').checked) {
             const pinsQty = parseInt(document.getElementById('router-pins-qty').value) || 0;
             pinsCostUnit = pinsQty * 10;
         }
 
         const unitTotal = materialCostUnit + pinsCostUnit;
-        const subTotal = unitTotal * qty;
-        const vatEnabled = document.getElementById('router-vat-toggle').checked;
-        const finalCost = vatEnabled ? subTotal * 1.15 : subTotal;
+        const totalCost = unitTotal * qty;
 
-        // Update UI
         document.getElementById('router-area-display').innerText = areaSqM.toFixed(2) + ' m²';
         document.getElementById('router-material-cost').innerText = 'R' + (materialCostUnit * qty).toFixed(2);
         document.getElementById('router-pins-cost').innerText = 'R' + (pinsCostUnit * qty).toFixed(2);
-        document.getElementById('router-qty-display').innerText = qty;
-        document.getElementById('router-total-cost').innerText = 'R' + finalCost.toFixed(2);
+        document.getElementById('router-total-cost').innerText = 'R' + totalCost.toFixed(2);
+
+        return {
+            name: document.getElementById('router-name').value.trim() || 'Router Cut Letters',
+            type: 'ACM Router Cut',
+            dimensions: `${width}mm × ${height}mm`,
+            qty: qty,
+            total: totalCost
+        };
+    }
+
+    // ADD ITEM TO ESTIMATE CART
+    function addItemToEstimate(calcType) {
+        let itemData;
+        if (calcType === 'chromadek') {
+            itemData = calculateChromadek();
+            if (itemData.total <= 0) {
+                alert('Please enter valid dimensions for the Chromadek sign.');
+                return;
+            }
+        } else if (calcType === 'acm-full') {
+            itemData = calculateACMFull();
+            if (itemData.total <= 0) {
+                alert('Please enter valid dimensions for the ACM Full board.');
+                return;
+            }
+        } else if (calcType === 'acm-router') {
+            itemData = calculateACMRouter();
+            if (itemData.total <= 0) {
+                alert('Please enter valid dimensions for the Router Cut letters.');
+                return;
+            }
+        }
+
+        projectItems.push({
+            id: Date.now(),
+            ...itemData
+        });
+
+        document.getElementById('cart-count').innerText = projectItems.length;
+        alert(`Successfully added "${itemData.name}" to project estimate!`);
+        switchMainTab('estimate');
+    }
+
+    // REMOVE ITEM FROM CART
+    function removeCartItem(id) {
+        projectItems = projectItems.filter(item => item.id !== id);
+        document.getElementById('cart-count').innerText = projectItems.length;
+        renderCart();
+    }
+
+    // RENDER ESTIMATE CART
+    function renderCart() {
+        const container = document.getElementById('cart-items-container');
+        const summaryBox = document.getElementById('cart-summary-box');
+
+        if (projectItems.length === 0) {
+            container.innerHTML = `<div class="empty-cart">No signage items added to estimate yet. Configure items in the Chromadek or ACM tabs and click "Add Item".</div>`;
+            summaryBox.style.display = 'none';
+            return;
+        }
+
+        summaryBox.style.display = 'block';
+        let subtotal = 0;
+        let html = '';
+
+        projectItems.forEach(item => {
+            subtotal += item.total;
+            html += `
+                <div class="cart-item">
+                    <div class="cart-item-details">
+                        <h4>${item.name} (${item.type})</h4>
+                        <p>Dimensions: ${item.dimensions} | Qty: ${item.qty}</p>
+                    </div>
+                    <div class="cart-item-price">
+                        <span class="price">R${item.total.toFixed(2)}</span>
+                        <button class="btn-danger" onclick="removeCartItem(${item.id})">Remove</button>
+                    </div>
+                </div>
+            `;
+        });
+
+        container.innerHTML = html;
+
+        const vatEnabled = document.getElementById('global-vat-toggle').checked;
+        const grandTotal = vatEnabled ? subtotal * 1.15 : subtotal;
+
+        document.getElementById('cart-subtotal').innerText = 'R' + subtotal.toFixed(2);
+        document.getElementById('cart-grand-total').innerText = 'R' + grandTotal.toFixed(2);
     }
 </script>
 
