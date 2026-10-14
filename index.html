@@ -15,6 +15,8 @@
             --text-muted: #a0a0a0;
             --border-color: #2c2c2c;
             --success-green: #28a745;
+            --edit-blue: #17a2b8;
+            --edit-blue-hover: #138496;
         }
 
         * {
@@ -306,6 +308,22 @@
             background-color: #218838;
         }
 
+        .btn-edit {
+            background-color: var(--edit-blue);
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            transition: all 0.2s;
+            margin-right: 5px;
+        }
+
+        .btn-edit:hover {
+            background-color: var(--edit-blue-hover);
+        }
+
         .btn-danger {
             background-color: #331111;
             color: #ff6b6b;
@@ -379,6 +397,10 @@
 
         .cart-item-price {
             text-align: right;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 6px;
         }
 
         .cart-item-price .price {
@@ -386,6 +408,11 @@
             color: var(--accent-red);
             font-size: 1.1rem;
             display: block;
+        }
+
+        .cart-actions {
+            display: flex;
+            gap: 5px;
         }
 
         .empty-cart {
@@ -410,11 +437,10 @@
                 align-items: flex-start;
             }
             .cart-item-price {
-                text-align: left;
+                align-items: flex-start;
                 width: 100%;
-                display: flex;
+                flex-direction: row;
                 justify-content: space-between;
-                align-items: center;
             }
         }
     </style>
@@ -953,8 +979,22 @@
         return {
             name: document.getElementById('ch-name').value.trim() || 'Chromadek Sign',
             type: 'Chromadek',
-            dimensions: `${width}mm × ${height}mm`,
+            calcType: 'chromadek',
+            width: width,
+            height: height,
             qty: qty,
+            frameToggle: document.getElementById('ch-frame-toggle').checked,
+            frameType: document.getElementById('ch-frame-type').value,
+            supportsToggle: document.getElementById('ch-supports-toggle').checked,
+            supportsType: document.getElementById('ch-supports-type').value,
+            supportsOrientation: document.getElementById('ch-supports-orientation').value,
+            supportsQty: document.getElementById('ch-supports-qty').value,
+            polesToggle: document.getElementById('ch-poles-toggle').checked,
+            poleType: document.getElementById('ch-pole-type').value,
+            poleLength: document.getElementById('ch-pole-length').value,
+            polesQty: document.getElementById('ch-poles-qty').value,
+            beadingToggle: document.getElementById('ch-beading-toggle').checked,
+            dimensions: `${width}mm × ${height}mm`,
             total: totalCost
         };
     }
@@ -1024,8 +1064,22 @@
         return {
             name: document.getElementById('acm-name').value.trim() || 'ACM Full Board',
             type: 'ACM Full Board',
-            dimensions: `${width}mm × ${height}mm`,
+            calcType: 'acm-full',
+            width: width,
+            height: height,
             qty: qty,
+            frameToggle: document.getElementById('acm-frame-toggle').checked,
+            frameType: document.getElementById('acm-frame-type').value,
+            supportsToggle: document.getElementById('acm-supports-toggle').checked,
+            supportsType: document.getElementById('acm-supports-type').value,
+            supportsOrientation: document.getElementById('acm-supports-orientation').value,
+            supportsQty: document.getElementById('acm-supports-qty').value,
+            polesToggle: document.getElementById('acm-poles-toggle').checked,
+            poleType: document.getElementById('acm-pole-type').value,
+            poleLength: document.getElementById('acm-pole-length').value,
+            polesQty: document.getElementById('acm-poles-qty').value,
+            beadingToggle: document.getElementById('acm-beading-toggle').checked,
+            dimensions: `${width}mm × ${height}mm`,
             total: totalCost
         };
     }
@@ -1057,8 +1111,14 @@
         return {
             name: document.getElementById('router-name').value.trim() || 'Router Cut Letters',
             type: 'ACM Router Cut',
-            dimensions: `${width}mm × ${height}mm`,
+            calcType: 'acm-router',
+            routerType: document.getElementById('router-type').value,
+            width: width,
+            height: height,
             qty: qty,
+            pinsToggle: document.getElementById('router-pins-toggle').checked,
+            pinsQty: document.getElementById('router-pins-qty').value,
+            dimensions: `${width}mm × ${height}mm`,
             total: totalCost
         };
     }
@@ -1159,6 +1219,83 @@
         switchMainTab('estimate');
     }
 
+    // EDIT CART ITEM
+    function editCartItem(id) {
+        const item = projectItems.find(i => i.id === id);
+        if (!item) return;
+
+        // Remove from cart temporarily while editing
+        removeCartItem(id);
+
+        if (item.calcType === 'chromadek') {
+            switchMainTab('chromadek');
+            document.getElementById('ch-name').value = item.name;
+            document.getElementById('ch-width').value = item.width;
+            document.getElementById('ch-height').value = item.height;
+            document.getElementById('ch-qty').value = item.qty;
+
+            document.getElementById('ch-frame-toggle').checked = item.frameToggle;
+            if(item.frameToggle) document.getElementById('ch-frame-panel').classList.add('open');
+            document.getElementById('ch-frame-type').value = item.frameType;
+
+            document.getElementById('ch-supports-toggle').checked = item.supportsToggle;
+            if(item.supportsToggle) document.getElementById('ch-supports-panel').classList.add('open');
+            document.getElementById('ch-supports-type').value = item.supportsType;
+            document.getElementById('ch-supports-orientation').value = item.supportsOrientation;
+            document.getElementById('ch-supports-qty').value = item.supportsQty;
+
+            document.getElementById('ch-poles-toggle').checked = item.polesToggle;
+            if(item.polesToggle) document.getElementById('ch-poles-panel').classList.add('open');
+            document.getElementById('ch-pole-type').value = item.poleType;
+            document.getElementById('ch-pole-length').value = item.poleLength;
+            document.getElementById('ch-poles-qty').value = item.polesQty;
+
+            document.getElementById('ch-beading-toggle').checked = item.beadingToggle;
+            calculateChromadek();
+
+        } else if (item.calcType === 'acm-full') {
+            switchMainTab('acm');
+            switchAcmSubTab('full');
+            document.getElementById('acm-name').value = item.name;
+            document.getElementById('acm-width').value = item.width;
+            document.getElementById('acm-height').value = item.height;
+            document.getElementById('acm-qty').value = item.qty;
+
+            document.getElementById('acm-frame-toggle').checked = item.frameToggle;
+            if(item.frameToggle) document.getElementById('acm-frame-panel').classList.add('open');
+            document.getElementById('acm-frame-type').value = item.frameType;
+
+            document.getElementById('acm-supports-toggle').checked = item.supportsToggle;
+            if(item.supportsToggle) document.getElementById('acm-supports-panel').classList.add('open');
+            document.getElementById('acm-supports-type').value = item.supportsType;
+            document.getElementById('acm-supports-orientation').value = item.supportsOrientation;
+            document.getElementById('acm-supports-qty').value = item.supportsQty;
+
+            document.getElementById('acm-poles-toggle').checked = item.polesToggle;
+            if(item.polesToggle) document.getElementById('acm-poles-panel').classList.add('open');
+            document.getElementById('acm-pole-type').value = item.poleType;
+            document.getElementById('acm-pole-length').value = item.poleLength;
+            document.getElementById('acm-poles-qty').value = item.polesQty;
+
+            document.getElementById('acm-beading-toggle').checked = item.beadingToggle;
+            calculateACMFull();
+
+        } else if (item.calcType === 'acm-router') {
+            switchMainTab('acm');
+            switchAcmSubTab('router');
+            document.getElementById('router-name').value = item.name;
+            document.getElementById('router-type').value = item.routerType;
+            document.getElementById('router-width').value = item.width;
+            document.getElementById('router-height').value = item.height;
+            document.getElementById('router-qty').value = item.qty;
+
+            document.getElementById('router-pins-toggle').checked = item.pinsToggle;
+            if(item.pinsToggle) document.getElementById('router-pins-panel').classList.add('open');
+            document.getElementById('router-pins-qty').value = item.pinsQty;
+            calculateACMRouter();
+        }
+    }
+
     // REMOVE ITEM FROM CART
     function removeCartItem(id) {
         projectItems = projectItems.filter(item => item.id !== id);
@@ -1201,7 +1338,10 @@
                     </div>
                     <div class="cart-item-price">
                         <span class="price">R${item.total.toFixed(2)}</span>
-                        <button class="btn-danger" onclick="removeCartItem(${item.id})">Remove</button>
+                        <div class="cart-actions">
+                            <button class="btn-edit" onclick="editCartItem(${item.id})">Edit</button>
+                            <button class="btn-danger" onclick="removeCartItem(${item.id})">Remove</button>
+                        </div>
                     </div>
                 </div>
             `;
