@@ -109,12 +109,12 @@
 
         .tab-btn {
             flex: 1;
-            min-width: 140px;
+            min-width: 120px;
             padding: 14px;
             background: none;
             border: none;
             color: var(--text-muted);
-            font-size: 0.9rem;
+            font-size: 0.85rem;
             font-weight: 600;
             cursor: pointer;
             transition: all 0.2s ease;
@@ -472,6 +472,9 @@
     <div class="tab-container">
         <button class="tab-btn active" onclick="switchMainTab('chromadek')">Chromadek</button>
         <button class="tab-btn" onclick="switchMainTab('acm')">ACM Options</button>
+        <button class="tab-btn" onclick="switchMainTab('abs')">ABS</button>
+        <button class="tab-btn" onclick="switchMainTab('correx')">Correx</button>
+        <button class="tab-btn" onclick="switchMainTab('safety')">Safety Signs</button>
         <button class="tab-btn" onclick="switchMainTab('estimate')">Project Estimate (<span id="cart-count">0</span>)</button>
     </div>
 
@@ -836,11 +839,142 @@
         </div>
     </div>
 
-    <!-- TAB 3: PROJECT ESTIMATE CART -->
+    <!-- TAB 3: ABS (AFTER CHROMADEK & ACM) -->
+    <div id="abs" class="tab-content">
+        <div class="form-group">
+            <label for="abs-name">Item Name / Reference</label>
+            <input type="text" id="abs-name" placeholder="e.g. ABS Board Sign">
+        </div>
+
+        <div class="form-grid">
+            <div class="form-group">
+                <label for="abs-width">Width (mm)</label>
+                <input type="number" id="abs-width" placeholder="e.g. 1000" oninput="calculateABS()">
+            </div>
+            <div class="form-group">
+                <label for="abs-height">Height (mm)</label>
+                <input type="number" id="abs-height" placeholder="e.g. 500" oninput="calculateABS()">
+            </div>
+            <div class="form-group">
+                <label for="abs-qty">Quantity</label>
+                <input type="number" id="abs-qty" value="1" min="1" oninput="calculateABS()">
+            </div>
+        </div>
+
+        <!-- ABS SUMMARY -->
+        <div class="summary-card">
+            <div class="summary-row">
+                <span>Area per Sign:</span>
+                <span id="abs-area-display">0.00 m²</span>
+            </div>
+            <div class="summary-row">
+                <span>ABS Sign Rate (R1,100/m²):</span>
+                <span id="abs-rate-display">R1,100.00</span>
+            </div>
+            <div class="summary-row total">
+                <span>Estimated Total (Excl. VAT):</span>
+                <span class="price" id="abs-total-cost">R0.00</span>
+            </div>
+        </div>
+
+        <button class="btn-primary" onclick="addItemToEstimate('abs')">+ Add Item to Project Estimate</button>
+    </div>
+
+    <!-- TAB 4: CORREX BOARDS -->
+    <div id="correx" class="tab-content">
+        <div class="form-group">
+            <label for="cx-name">Item Name / Reference</label>
+            <input type="text" id="cx-name" placeholder="e.g. Estate Agent Correx Board">
+        </div>
+
+        <div class="form-group">
+            <label for="cx-thickness">Thickness / Rate</label>
+            <select id="cx-thickness" onchange="calculateCorrex()">
+                <option value="850">3mm Correx Board with Print (R850/m²)</option>
+                <option value="1000">5mm Correx Board with Print (R1,000/m²)</option>
+            </select>
+        </div>
+
+        <div class="form-grid">
+            <div class="form-group">
+                <label for="cx-width">Width (mm)</label>
+                <input type="number" id="cx-width" placeholder="e.g. 600" oninput="calculateCorrex()">
+            </div>
+            <div class="form-group">
+                <label for="cx-height">Height (mm)</label>
+                <input type="number" id="cx-height" placeholder="e.g. 400" oninput="calculateCorrex()">
+            </div>
+            <div class="form-group">
+                <label for="cx-qty">Quantity</label>
+                <input type="number" id="cx-qty" value="1" min="1" oninput="calculateCorrex()">
+            </div>
+        </div>
+
+        <!-- CORREX SUMMARY -->
+        <div class="summary-card">
+            <div class="summary-row">
+                <span>Area per Board:</span>
+                <span id="cx-area-display">0.00 m²</span>
+            </div>
+            <div class="summary-row">
+                <span>Correx Unit Price:</span>
+                <span id="cx-unit-cost">R0.00</span>
+            </div>
+            <div class="summary-row total">
+                <span>Estimated Total (Excl. VAT):</span>
+                <span class="price" id="cx-total-cost">R0.00</span>
+            </div>
+        </div>
+
+        <button class="btn-primary" onclick="addItemToEstimate('correx')">+ Add Item to Project Estimate</button>
+    </div>
+
+    <!-- TAB 5: SAFETY SIGNS -->
+    <div id="safety" class="tab-content">
+        <div class="form-group">
+            <label for="safety-name">Item Name / Reference</label>
+            <input type="text" id="safety-name" placeholder="e.g. Fire Extinguisher Sign">
+        </div>
+
+        <div class="form-grid">
+            <div class="form-group">
+                <label for="safety-width">Width (mm)</label>
+                <input type="number" id="safety-width" placeholder="e.g. 300" oninput="calculateSafety()">
+            </div>
+            <div class="form-group">
+                <label for="safety-height">Height (mm)</label>
+                <input type="number" id="safety-height" placeholder="e.g. 300" oninput="calculateSafety()">
+            </div>
+            <div class="form-group">
+                <label for="safety-qty">Quantity</label>
+                <input type="number" id="safety-qty" value="1" min="1" oninput="calculateSafety()">
+            </div>
+        </div>
+
+        <!-- SAFETY SUMMARY -->
+        <div class="summary-card">
+            <div class="summary-row">
+                <span>Area per Sign:</span>
+                <span id="safety-area-display">0.00 m²</span>
+            </div>
+            <div class="summary-row">
+                <span>Formula:</span>
+                <span>Area (m²) × R350 × 2.2</span>
+            </div>
+            <div class="summary-row total">
+                <span>Estimated Total (Excl. VAT):</span>
+                <span class="price" id="safety-total-cost">R0.00</span>
+            </div>
+        </div>
+
+        <button class="btn-primary" onclick="addItemToEstimate('safety')">+ Add Item to Project Estimate</button>
+    </div>
+
+    <!-- TAB 6: PROJECT ESTIMATE CART -->
     <div id="estimate" class="tab-content">
         <h3 style="margin-bottom: 15px; font-size: 1.1rem; text-transform: uppercase; color: var(--text-main);">Project Quotation Items</h3>
         <div id="cart-items-container">
-            <div class="empty-cart">No signage items added to estimate yet. Configure items in the Chromadek or ACM tabs and click "Add Item".</div>
+            <div class="empty-cart">No signage items added to estimate yet. Configure items in the signage tabs and click "Add Item".</div>
         </div>
 
         <div class="summary-card" id="cart-summary-box" style="display: none;">
@@ -870,22 +1004,31 @@
         document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
         document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
 
-        if (tabId === 'chromadek') {
-            document.querySelectorAll('.tab-btn')[0].classList.add('active');
-            document.getElementById('chromadek').classList.add('active');
-            calculateChromadek();
-        } else if (tabId === 'acm') {
-            document.querySelectorAll('.tab-btn')[1].classList.add('active');
-            document.getElementById('acm').classList.add('active');
-            if(document.getElementById('acm-sub-full').classList.contains('active')) {
-                calculateACMFull();
-            } else {
-                calculateACMRouter();
+        const tabMap = {
+            'chromadek': 0,
+            'acm': 1,
+            'abs': 2,
+            'correx': 3,
+            'safety': 4,
+            'estimate': 5
+        };
+
+        if (tabMap.hasOwnProperty(tabId)) {
+            document.querySelectorAll('.tab-btn')[tabMap[tabId]].classList.add('active');
+            document.getElementById(tabId).classList.add('active');
+
+            if (tabId === 'chromadek') calculateChromadek();
+            else if (tabId === 'acm') {
+                if (document.getElementById('acm-sub-full').classList.contains('active')) {
+                    calculateACMFull();
+                } else {
+                    calculateACMRouter();
+                }
             }
-        } else if (tabId === 'estimate') {
-            document.querySelectorAll('.tab-btn')[2].classList.add('active');
-            document.getElementById('estimate').classList.add('active');
-            renderCart();
+            else if (tabId === 'abs') calculateABS();
+            else if (tabId === 'correx') calculateCorrex();
+            else if (tabId === 'safety') calculateSafety();
+            else if (tabId === 'estimate') renderCart();
         }
     }
 
@@ -1126,6 +1269,85 @@
         };
     }
 
+    // ABS SIGNS CALCULATOR
+    function calculateABS() {
+        const width = parseFloat(document.getElementById('abs-width').value) || 0;
+        const height = parseFloat(document.getElementById('abs-height').value) || 0;
+        const qty = parseInt(document.getElementById('abs-qty').value) || 1;
+        const areaSqM = (width * height) / 1000000;
+
+        const totalCost = areaSqM * 1100 * qty;
+
+        document.getElementById('abs-area-display').innerText = areaSqM.toFixed(2) + ' m²';
+        document.getElementById('abs-total-cost').innerText = 'R' + totalCost.toFixed(2);
+
+        return {
+            name: document.getElementById('abs-name').value.trim() || 'ABS Sign',
+            type: 'ABS Sign',
+            calcType: 'abs',
+            width: width,
+            height: height,
+            qty: qty,
+            dimensions: `${width}mm × ${height}mm`,
+            total: totalCost
+        };
+    }
+
+    // CORREX BOARDS CALCULATOR
+    function calculateCorrex() {
+        const rate = parseFloat(document.getElementById('cx-thickness').value) || 850;
+        const width = parseFloat(document.getElementById('cx-width').value) || 0;
+        const height = parseFloat(document.getElementById('cx-height').value) || 0;
+        const qty = parseInt(document.getElementById('cx-qty').value) || 1;
+        const areaSqM = (width * height) / 1000000;
+
+        const unitCost = areaSqM * rate;
+        const totalCost = unitCost * qty;
+
+        document.getElementById('cx-area-display').innerText = areaSqM.toFixed(2) + ' m²';
+        document.getElementById('cx-unit-cost').innerText = 'R' + unitCost.toFixed(2);
+        document.getElementById('cx-total-cost').innerText = 'R' + totalCost.toFixed(2);
+
+        const thicknessLabel = rate === 850 ? '3mm' : '5mm';
+
+        return {
+            name: document.getElementById('cx-name').value.trim() || `Correx Board (${thicknessLabel})`,
+            type: `Correx (${thicknessLabel})`,
+            calcType: 'correx',
+            rate: rate,
+            width: width,
+            height: height,
+            qty: qty,
+            dimensions: `${width}mm × ${height}mm`,
+            total: totalCost
+        };
+    }
+
+    // SAFETY SIGNS CALCULATOR
+    function calculateSafety() {
+        const width = parseFloat(document.getElementById('safety-width').value) || 0;
+        const height = parseFloat(document.getElementById('safety-height').value) || 0;
+        const qty = parseInt(document.getElementById('safety-qty').value) || 1;
+        const areaSqM = (width * height) / 1000000;
+
+        const unitCost = areaSqM * 350 * 2.2;
+        const totalCost = unitCost * qty;
+
+        document.getElementById('safety-area-display').innerText = areaSqM.toFixed(2) + ' m²';
+        document.getElementById('safety-total-cost').innerText = 'R' + totalCost.toFixed(2);
+
+        return {
+            name: document.getElementById('safety-name').value.trim() || 'Safety Sign',
+            type: 'Safety Sign',
+            calcType: 'safety',
+            width: width,
+            height: height,
+            qty: qty,
+            dimensions: `${width}mm × ${height}mm`,
+            total: totalCost
+        };
+    }
+
     // RESET FORM FIELDS
     function resetForm(calcType) {
         if (calcType === 'chromadek') {
@@ -1185,6 +1407,25 @@
             document.getElementById('router-pins-panel').classList.remove('open');
             document.getElementById('router-pins-qty').value = '10';
             calculateACMRouter();
+        } else if (calcType === 'abs') {
+            document.getElementById('abs-name').value = '';
+            document.getElementById('abs-width').value = '';
+            document.getElementById('abs-height').value = '';
+            document.getElementById('abs-qty').value = '1';
+            calculateABS();
+        } else if (calcType === 'correx') {
+            document.getElementById('cx-name').value = '';
+            document.getElementById('cx-thickness').value = '850';
+            document.getElementById('cx-width').value = '';
+            document.getElementById('cx-height').value = '';
+            document.getElementById('cx-qty').value = '1';
+            calculateCorrex();
+        } else if (calcType === 'safety') {
+            document.getElementById('safety-name').value = '';
+            document.getElementById('safety-width').value = '';
+            document.getElementById('safety-height').value = '';
+            document.getElementById('safety-qty').value = '1';
+            calculateSafety();
         }
     }
 
@@ -1193,22 +1434,21 @@
         let itemData;
         if (calcType === 'chromadek') {
             itemData = calculateChromadek();
-            if (itemData.total <= 0) {
-                alert('Please enter valid dimensions for the Chromadek sign.');
-                return;
-            }
         } else if (calcType === 'acm-full') {
             itemData = calculateACMFull();
-            if (itemData.total <= 0) {
-                alert('Please enter valid dimensions for the ACM Full board.');
-                return;
-            }
         } else if (calcType === 'acm-router') {
             itemData = calculateACMRouter();
-            if (itemData.total <= 0) {
-                alert('Please enter valid dimensions for the Router Cut letters.');
-                return;
-            }
+        } else if (calcType === 'abs') {
+            itemData = calculateABS();
+        } else if (calcType === 'correx') {
+            itemData = calculateCorrex();
+        } else if (calcType === 'safety') {
+            itemData = calculateSafety();
+        }
+
+        if (!itemData || itemData.total <= 0) {
+            alert('Please enter valid dimensions.');
+            return;
         }
 
         projectItems.push({
@@ -1296,6 +1536,31 @@
             if(item.pinsToggle) document.getElementById('router-pins-panel').classList.add('open');
             document.getElementById('router-pins-qty').value = item.pinsQty;
             calculateACMRouter();
+
+        } else if (item.calcType === 'abs') {
+            switchMainTab('abs');
+            document.getElementById('abs-name').value = item.name;
+            document.getElementById('abs-width').value = item.width;
+            document.getElementById('abs-height').value = item.height;
+            document.getElementById('abs-qty').value = item.qty;
+            calculateABS();
+
+        } else if (item.calcType === 'correx') {
+            switchMainTab('correx');
+            document.getElementById('cx-name').value = item.name;
+            document.getElementById('cx-thickness').value = item.rate;
+            document.getElementById('cx-width').value = item.width;
+            document.getElementById('cx-height').value = item.height;
+            document.getElementById('cx-qty').value = item.qty;
+            calculateCorrex();
+
+        } else if (item.calcType === 'safety') {
+            switchMainTab('safety');
+            document.getElementById('safety-name').value = item.name;
+            document.getElementById('safety-width').value = item.width;
+            document.getElementById('safety-height').value = item.height;
+            document.getElementById('safety-qty').value = item.qty;
+            calculateSafety();
         }
     }
 
@@ -1325,7 +1590,7 @@
         updateEmailButtonText();
 
         if (projectItems.length === 0) {
-            container.innerHTML = `<div class="empty-cart">No signage items added to estimate yet. Configure items in the Chromadek or ACM tabs and click "Add Item".</div>`;
+            container.innerHTML = `<div class="empty-cart">No signage items added to estimate yet. Configure items in the signage tabs and click "Add Item".</div>`;
             summaryBox.style.display = 'none';
             return;
         }
