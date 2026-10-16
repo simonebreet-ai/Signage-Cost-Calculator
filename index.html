@@ -109,17 +109,18 @@
 
         .tab-btn {
             flex: 1;
-            min-width: 120px;
-            padding: 14px;
+            min-width: 110px;
+            padding: 14px 8px;
             background: none;
             border: none;
             color: var(--text-muted);
-            font-size: 0.85rem;
+            font-size: 0.8rem;
             font-weight: 600;
             cursor: pointer;
             transition: all 0.2s ease;
             text-transform: uppercase;
             letter-spacing: 0.5px;
+            text-align: center;
         }
 
         .tab-btn:hover {
@@ -229,6 +230,11 @@
             border-color: var(--accent-red);
         }
 
+        option {
+            background-color: #1a1a1a;
+            color: var(--text-main);
+        }
+
         /* Toggle Checkbox */
         .checkbox-group {
             display: flex;
@@ -265,6 +271,16 @@
 
         .sub-panel.open {
             display: block;
+        }
+
+        .section-title {
+            font-size: 0.95rem;
+            font-weight: 700;
+            margin-top: 20px;
+            margin-bottom: 12px;
+            color: var(--accent-red);
+            text-transform: uppercase;
+            letter-spacing: 1px;
         }
 
         /* Buttons */
@@ -449,7 +465,7 @@
 
 <div class="calculator-card">
     <div class="header">
-        <img src="LOGO.WEBP" alt="Company Logo" class="logo-img">
+        <img src="LOGO.WEBP" alt="Company Logo" class="logo-img" onerror="this.style.display='none'">
         <h1>Signage <span>Cost Estimator</span></h1>
     </div>
 
@@ -462,8 +478,8 @@
         <div class="form-group" style="margin-bottom: 0;">
             <label for="salesperson-select">Salesperson</label>
             <select id="salesperson-select" onchange="updateEmailButtonText()">
-                <option value="Simone|Simonebreet@gmail.com">Simone</option>
-                <option value="Simone Test|admin@signarama.co.za">Simone Test</option>
+                <option value="Ajit|ajit@signarama.co.za">Ajit</option>
+                <option value="Simone |admin@signarama.co.za">Simone</option>
             </select>
         </div>
     </div>
@@ -475,6 +491,7 @@
         <button class="tab-btn" onclick="switchMainTab('abs')">ABS</button>
         <button class="tab-btn" onclick="switchMainTab('correx')">Correx</button>
         <button class="tab-btn" onclick="switchMainTab('safety')">Safety Signs</button>
+        <button class="tab-btn" onclick="switchMainTab('build-own')">Build Your Own</button>
         <button class="tab-btn" onclick="switchMainTab('estimate')">Project Estimate (<span id="cart-count">0</span>)</button>
     </div>
 
@@ -507,15 +524,21 @@
         </label>
 
         <div id="ch-frame-panel" class="sub-panel">
-            <div class="form-group">
-                <label for="ch-frame-type">Frame Tubing Profile (Rate per Meter)</label>
-                <select id="ch-frame-type" onchange="calculateChromadek()">
-                    <option value="0">Select Profile...</option>
-                    <option value="240">25 × 25 × 1.6 (R240 / meter)</option>
-                    <option value="315">25 × 50 × 1.6 (R315 / meter)</option>
-                    <option value="450">50 × 50 × 2.0 (R450 / meter)</option>
-                    <option value="640">76 × 76 × 2.0 (R640 / meter)</option>
-                </select>
+            <div class="form-grid-2">
+                <div class="form-group">
+                    <label for="ch-frame-type">Frame Tubing Profile</label>
+                    <select id="ch-frame-type" onchange="updateProfileRate('ch-frame-type', 'ch-frame-rate'); calculateChromadek();">
+                        <option value="0">Select Profile...</option>
+                        <option value="240">25 × 25 × 1.6 (Standard: R240 / m)</option>
+                        <option value="315">25 × 50 × 1.6 (Standard: R315 / m)</option>
+                        <option value="450">50 × 50 × 2.0 (Standard: R450 / m)</option>
+                        <option value="640">76 × 76 × 2.0 (Standard: R640 / m)</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="ch-frame-rate">Rate per Meter (R/m)</label>
+                    <input type="number" id="ch-frame-rate" placeholder="0" min="0" oninput="calculateChromadek()">
+                </div>
             </div>
         </div>
 
@@ -528,25 +551,34 @@
         <div id="ch-supports-panel" class="sub-panel">
             <div class="form-grid-2">
                 <div class="form-group">
-                    <label for="ch-supports-type">Support Tubing Profile (Rate per Meter)</label>
-                    <select id="ch-supports-type" onchange="calculateChromadek()">
+                    <label for="ch-supports-type">Support Tubing Profile</label>
+                    <select id="ch-supports-type" onchange="updateProfileRate('ch-supports-type', 'ch-supports-rate'); calculateChromadek();">
                         <option value="0">Select Profile...</option>
-                        <option value="240">25 × 25 × 1.6 (R240 / meter)</option>
-                        <option value="315">25 × 50 × 1.6 (R315 / meter)</option>
-                        <option value="450">50 × 50 × 2.0 (R450 / meter)</option>
-                        <option value="640">76 × 76 × 2.0 (R640 / meter)</option>
+                        <option value="240">25 × 25 × 1.6 (Standard: R240 / m)</option>
+                        <option value="315">25 × 50 × 1.6 (Standard: R315 / m)</option>
+                        <option value="450">50 × 50 × 2.0 (Standard: R450 / m)</option>
+                        <option value="640">76 × 76 × 2.0 (Standard: R640 / m)</option>
                     </select>
                 </div>
                 <div class="form-group">
+                    <label for="ch-supports-rate">Rate per Meter (R/m)</label>
+                    <input type="number" id="ch-supports-rate" placeholder="0" min="0" oninput="calculateChromadek()">
+                </div>
+                <div class="form-group">
                     <label for="ch-supports-orientation">Orientation</label>
-                    <select id="ch-supports-orientation" onchange="calculateChromadek()">
-                        <option value="vertical">Vertical Supports</option>
-                        <option value="horizontal">Horizontal Supports</option>
+                    <select id="ch-supports-orientation" onchange="handleSupportsOrientation('ch')">
+                        <option value="vertical">Vertical Supports Only</option>
+                        <option value="horizontal">Horizontal Supports Only</option>
+                        <option value="both">Both Vertical & Horizontal</option>
                     </select>
                 </div>
-                <div class="form-group full-width" style="grid-column: span 2;">
-                    <label for="ch-supports-qty">Number of Supports</label>
-                    <input type="number" id="ch-supports-qty" value="1" min="1" oninput="calculateChromadek()">
+                <div class="form-group" id="ch-vert-qty-group">
+                    <label for="ch-supports-vert-qty">Number of Vertical Supports</label>
+                    <input type="number" id="ch-supports-vert-qty" value="1" min="0" oninput="calculateChromadek()">
+                </div>
+                <div class="form-group" id="ch-horiz-qty-group" style="display: none;">
+                    <label for="ch-supports-horiz-qty">Number of Horizontal Supports</label>
+                    <input type="number" id="ch-supports-horiz-qty" value="1" min="0" oninput="calculateChromadek()">
                 </div>
             </div>
         </div>
@@ -560,20 +592,24 @@
         <div id="ch-poles-panel" class="sub-panel">
             <div class="form-grid-2">
                 <div class="form-group">
-                    <label for="ch-pole-type">Pole Tubing Profile (Rate per Meter)</label>
-                    <select id="ch-pole-type" onchange="calculateChromadek()">
+                    <label for="ch-pole-type">Pole Tubing Profile</label>
+                    <select id="ch-pole-type" onchange="updateProfileRate('ch-pole-type', 'ch-pole-rate'); calculateChromadek();">
                         <option value="0">Select Profile...</option>
-                        <option value="240">25 × 25 × 1.6 (R240 / meter)</option>
-                        <option value="315">25 × 50 × 1.6 (R315 / meter)</option>
-                        <option value="450">50 × 50 × 2.0 (R450 / meter)</option>
-                        <option value="640">76 × 76 × 2.0 (R640 / meter)</option>
+                        <option value="240">25 × 25 × 1.6 (Standard: R240 / m)</option>
+                        <option value="315">25 × 50 × 1.6 (Standard: R315 / m)</option>
+                        <option value="450">50 × 50 × 2.0 (Standard: R450 / m)</option>
+                        <option value="640">76 × 76 × 2.0 (Standard: R640 / m)</option>
                     </select>
+                </div>
+                <div class="form-group">
+                    <label for="ch-pole-rate">Rate per Meter (R/m)</label>
+                    <input type="number" id="ch-pole-rate" placeholder="0" min="0" oninput="calculateChromadek()">
                 </div>
                 <div class="form-group">
                     <label for="ch-pole-length">Length per Pole (m)</label>
                     <input type="number" id="ch-pole-length" value="3" min="1" step="0.5" oninput="calculateChromadek()">
                 </div>
-                <div class="form-group full-width" style="grid-column: span 2;">
+                <div class="form-group">
                     <label for="ch-poles-qty">Number of Poles</label>
                     <input type="number" id="ch-poles-qty" value="2" min="1" oninput="calculateChromadek()">
                 </div>
@@ -658,15 +694,21 @@
             </label>
 
             <div id="acm-frame-panel" class="sub-panel">
-                <div class="form-group">
-                    <label for="acm-frame-type">Frame Tubing Profile (Rate per Meter)</label>
-                    <select id="acm-frame-type" onchange="calculateACMFull()">
-                        <option value="0">Select Profile...</option>
-                        <option value="240">25 × 25 × 1.6 (R240 / meter)</option>
-                        <option value="315">25 × 50 × 1.6 (R315 / meter)</option>
-                        <option value="450">50 × 50 × 2.0 (R450 / meter)</option>
-                        <option value="640">76 × 76 × 2.0 (R640 / meter)</option>
-                    </select>
+                <div class="form-grid-2">
+                    <div class="form-group">
+                        <label for="acm-frame-type">Frame Tubing Profile</label>
+                        <select id="acm-frame-type" onchange="updateProfileRate('acm-frame-type', 'acm-frame-rate'); calculateACMFull();">
+                            <option value="0">Select Profile...</option>
+                            <option value="240">25 × 25 × 1.6 (Standard: R240 / m)</option>
+                            <option value="315">25 × 50 × 1.6 (Standard: R315 / m)</option>
+                            <option value="450">50 × 50 × 2.0 (Standard: R450 / m)</option>
+                            <option value="640">76 × 76 × 2.0 (Standard: R640 / m)</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="acm-frame-rate">Rate per Meter (R/m)</label>
+                        <input type="number" id="acm-frame-rate" placeholder="0" min="0" oninput="calculateACMFull()">
+                    </div>
                 </div>
             </div>
 
@@ -679,25 +721,34 @@
             <div id="acm-supports-panel" class="sub-panel">
                 <div class="form-grid-2">
                     <div class="form-group">
-                        <label for="acm-supports-type">Support Tubing Profile (Rate per Meter)</label>
-                        <select id="acm-supports-type" onchange="calculateACMFull()">
+                        <label for="acm-supports-type">Support Tubing Profile</label>
+                        <select id="acm-supports-type" onchange="updateProfileRate('acm-supports-type', 'acm-supports-rate'); calculateACMFull();">
                             <option value="0">Select Profile...</option>
-                            <option value="240">25 × 25 × 1.6 (R240 / meter)</option>
-                            <option value="315">25 × 50 × 1.6 (R315 / meter)</option>
-                            <option value="450">50 × 50 × 2.0 (R450 / meter)</option>
-                            <option value="640">76 × 76 × 2.0 (R640 / meter)</option>
+                            <option value="240">25 × 25 × 1.6 (Standard: R240 / m)</option>
+                            <option value="315">25 × 50 × 1.6 (Standard: R315 / m)</option>
+                            <option value="450">50 × 50 × 2.0 (Standard: R450 / m)</option>
+                            <option value="640">76 × 76 × 2.0 (Standard: R640 / m)</option>
                         </select>
                     </div>
                     <div class="form-group">
+                        <label for="acm-supports-rate">Rate per Meter (R/m)</label>
+                        <input type="number" id="acm-supports-rate" placeholder="0" min="0" oninput="calculateACMFull()">
+                    </div>
+                    <div class="form-group">
                         <label for="acm-supports-orientation">Orientation</label>
-                        <select id="acm-supports-orientation" onchange="calculateACMFull()">
-                            <option value="vertical">Vertical Supports</option>
-                            <option value="horizontal">Horizontal Supports</option>
+                        <select id="acm-supports-orientation" onchange="handleSupportsOrientation('acm')">
+                            <option value="vertical">Vertical Supports Only</option>
+                            <option value="horizontal">Horizontal Supports Only</option>
+                            <option value="both">Both Vertical & Horizontal</option>
                         </select>
                     </div>
-                    <div class="form-group full-width" style="grid-column: span 2;">
-                        <label for="acm-supports-qty">Number of Supports</label>
-                        <input type="number" id="acm-supports-qty" value="1" min="1" oninput="calculateACMFull()">
+                    <div class="form-group" id="acm-vert-qty-group">
+                        <label for="acm-supports-vert-qty">Number of Vertical Supports</label>
+                        <input type="number" id="acm-supports-vert-qty" value="1" min="0" oninput="calculateACMFull()">
+                    </div>
+                    <div class="form-group" id="acm-horiz-qty-group" style="display: none;">
+                        <label for="acm-supports-horiz-qty">Number of Horizontal Supports</label>
+                        <input type="number" id="acm-supports-horiz-qty" value="1" min="0" oninput="calculateACMFull()">
                     </div>
                 </div>
             </div>
@@ -711,20 +762,24 @@
             <div id="acm-poles-panel" class="sub-panel">
                 <div class="form-grid-2">
                     <div class="form-group">
-                        <label for="acm-pole-type">Pole Tubing Profile (Rate per Meter)</label>
-                        <select id="acm-pole-type" onchange="calculateACMFull()">
+                        <label for="acm-pole-type">Pole Tubing Profile</label>
+                        <select id="acm-pole-type" onchange="updateProfileRate('acm-pole-type', 'acm-pole-rate'); calculateACMFull();">
                             <option value="0">Select Profile...</option>
-                            <option value="240">25 × 25 × 1.6 (R240 / meter)</option>
-                            <option value="315">25 × 50 × 1.6 (R315 / meter)</option>
-                            <option value="450">50 × 50 × 2.0 (R450 / meter)</option>
-                            <option value="640">76 × 76 × 2.0 (R640 / meter)</option>
+                            <option value="240">25 × 25 × 1.6 (Standard: R240 / m)</option>
+                            <option value="315">25 × 50 × 1.6 (Standard: R315 / m)</option>
+                            <option value="450">50 × 50 × 2.0 (Standard: R450 / m)</option>
+                            <option value="640">76 × 76 × 2.0 (Standard: R640 / m)</option>
                         </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="acm-pole-rate">Rate per Meter (R/m)</label>
+                        <input type="number" id="acm-pole-rate" placeholder="0" min="0" oninput="calculateACMFull()">
                     </div>
                     <div class="form-group">
                         <label for="acm-pole-length">Length per Pole (m)</label>
                         <input type="number" id="acm-pole-length" value="3" min="1" step="0.5" oninput="calculateACMFull()">
                     </div>
-                    <div class="form-group full-width" style="grid-column: span 2;">
+                    <div class="form-group">
                         <label for="acm-poles-qty">Number of Poles</label>
                         <input type="number" id="acm-poles-qty" value="2" min="1" oninput="calculateACMFull()">
                     </div>
@@ -839,7 +894,7 @@
         </div>
     </div>
 
-    <!-- TAB 3: ABS (AFTER CHROMADEK & ACM) -->
+    <!-- TAB 3: ABS -->
     <div id="abs" class="tab-content">
         <div class="form-group">
             <label for="abs-name">Item Name / Reference</label>
@@ -970,7 +1025,216 @@
         <button class="btn-primary" onclick="addItemToEstimate('safety')">+ Add Item to Project Estimate</button>
     </div>
 
-    <!-- TAB 6: PROJECT ESTIMATE CART -->
+    <!-- TAB 6: BUILD YOUR OWN -->
+    <div id="build-own" class="tab-content">
+        <div class="form-group">
+            <label for="byo-name">Item Name / Reference</label>
+            <input type="text" id="byo-name" placeholder="e.g. Custom Composite Signage">
+        </div>
+
+        <!-- Dimensions -->
+        <div class="section-title" style="margin-top: 0;">1. Dimensions & Options</div>
+        <div class="form-grid">
+            <div class="form-group">
+                <label for="byo-width">Width (mm)</label>
+                <input type="number" id="byo-width" placeholder="e.g. 841" min="0" oninput="calculateBuildYourOwn()">
+            </div>
+            <div class="form-group">
+                <label for="byo-height">Height (mm)</label>
+                <input type="number" id="byo-height" placeholder="e.g. 594" min="0" oninput="calculateBuildYourOwn()">
+            </div>
+            <div class="form-group">
+                <label for="byo-qty">Quantity</label>
+                <input type="number" id="byo-qty" value="1" min="1" oninput="calculateBuildYourOwn()">
+            </div>
+        </div>
+
+        <!-- Double Sided Toggle -->
+        <label class="checkbox-group">
+            <input type="checkbox" id="byo-double-sided" onchange="toggleByoSecondSide(); calculateBuildYourOwn();">
+            <span><strong>Double-Sided Sign</strong> (Add a 2nd print layer to the reverse side)</span>
+        </label>
+
+        <!-- Substrate & Primary Print -->
+        <div class="section-title">2. Substrate & Specialty Materials</div>
+        <div class="form-group">
+            <label for="byo-board-type">Select Substrate Board / Material</label>
+            <select id="byo-board-type" onchange="calculateBuildYourOwn()">
+                <option value="0" selected>None (Vinyl / Frame only)</option>
+                <option value="600">Chromadek Sheet 0.5-0.6 (R600/m²)</option>
+                <option value="800">ACM / ACP 2mm (R800/m²)</option>
+                <option value="1400">ACM / ACP 3mm (R1,400/m²)</option>
+                <option value="1850">Perspex 3mm (R1,850/m²)</option>
+                <option value="2850">Perspex 5mm (R2,850/m²)</option>
+                <option value="950">ABS Board (R300/m²)</option>
+                <option value="850">Correx Board 3mm (R200/m²)</option>
+                <option value="850">Correx Board 5mm (R350/m²)</option>
+                <option value="1000">MFoam (R1,000/m²)</option>
+                <option value="1150">Vehicle Magnets (R1,150/m²)</option>
+
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="byo-side1-vinyl">Primary / Side 1 Print Option</label>
+            <select id="byo-side1-vinyl" onchange="calculateBuildYourOwn()">
+                <option value="0" selected>No Print on Side 1 (Bare Board)</option>
+                <option value="350">Poster Prints (R350/m²)</option>
+                <option value="850">Wallpaper (R850/m²)</option>
+                <option value="650">Printable Vinyl 3-5 Yr (R650/m²)</option>
+                <option value="1250">Cast Vinyl + Lam (R1,250/m²)</option>
+                <option value="650">Pigmented Vinyl 5-7 Yr (R650/m²)</option>
+                <option value="350">Promotional Vinyl - With Lam (R350/m²)</option>
+                <option value="260">Promotional Vinyl - No Lam (R260/m²)</option>
+                <option value="650">One Way Vision / Contra Vision (R650/m²)</option>
+                <option value="450">One Way Vision - Large Qty (R450/m²)</option>
+                <option value="650">Sandblast Vinyl - Printed (R650/m²)</option>
+                <option value="450">Sandblast Vinyl - Non-Printed (R450/m²)</option>
+                <option value="850">Translucent Vinyl (R850/m²)</option>
+                <option value="400">PVC Banner - Standard (R400/m²)</option>
+            </select>
+        </div>
+
+        <!-- Second Side Options Container -->
+        <div id="byo-second-side-container" class="sub-panel">
+            <div class="form-group" style="margin-bottom:0;">
+                <label for="byo-side2-vinyl">Side 2 / Reverse Print Option</label>
+                <select id="byo-side2-vinyl" onchange="calculateBuildYourOwn()">
+                    <option value="0" selected disabled>-- Select 2nd Side Print --</option>
+                    <option value="350">Poster Prints (R350/m²)</option>
+                    <option value="850">Wallpaper (R850/m²)</option>
+                    <option value="650">Printable Vinyl 3-5 Yr (R650/m²)</option>
+                    <option value="1250">Cast Vinyl + Lam (R1,250/m²)</option>
+                    <option value="650">Pigmented Vinyl 5-7 Yr (R650/m²)</option>
+                    <option value="350">Promotional Vinyl - With Lam (R350/m²)</option>
+                    <option value="260">Promotional Vinyl - No Lam (R260/m²)</option>
+                    <option value="650">One Way Vision / Contra Vision (R650/m²)</option>
+                    <option value="450">One Way Vision - Large Qty (R450/m²)</option>
+                    <option value="650">Sandblast Vinyl - Printed (R650/m²)</option>
+                    <option value="450">Sandblast Vinyl - Non-Printed (R450/m²)</option>
+                    <option value="850">Translucent Vinyl (R850/m²)</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Framing, Reinforcement & Poles -->
+        <div class="section-title">3. Frame, Reinforcement & Poles</div>
+        <div class="form-grid-2">
+            <div class="form-group">
+                <label for="byo-steel-profile">Outer Frame Steel Profile</label>
+                <select id="byo-steel-profile" onchange="updateProfileRate('byo-steel-profile', 'byo-steel-rate'); calculateBuildYourOwn();">
+                    <option value="0" selected>None</option>
+                    <option value="240">25×25×1.6 (Standard: R240/m)</option>
+                    <option value="300">25×50×1.6 (Standard: R300/m)</option>
+                    <option value="350">30×50×1.6 (Standard: R350/m)</option>
+                    <option value="450">50×50×2.0 (Standard: R450/m)</option>
+                    <option value="550">76×76×2.0 (Standard: R550/m)</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="byo-steel-rate">Frame Rate per Meter (R/m)</label>
+                <input type="number" id="byo-steel-rate" placeholder="0" min="0" oninput="calculateBuildYourOwn()">
+            </div>
+        </div>
+
+        <div class="form-grid-2">
+            <div class="form-group">
+                <label for="byo-beading">Aluminum Beading Profile</label>
+                <select id="byo-beading" onchange="updateProfileRate('byo-beading', 'byo-beading-rate'); calculateBuildYourOwn();">
+                    <option value="0" selected>No Beading</option>
+                    <option value="100">Beading(Standard: R100/m)</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="byo-beading-rate">Beading Rate per Meter (R/m)</label>
+                <input type="number" id="byo-beading-rate" placeholder="0" min="0" oninput="calculateBuildYourOwn()">
+            </div>
+        </div>
+
+        <div class="form-grid-2">
+            <div class="form-group">
+                <label for="byo-vert-braces">Vertical Internal Braces Qty</label>
+                <input type="number" id="byo-vert-braces" placeholder="0" min="0" oninput="calculateBuildYourOwn()">
+            </div>
+            <div class="form-group">
+                <label for="byo-horiz-braces">Horizontal Internal Braces Qty</label>
+                <input type="number" id="byo-horiz-braces" placeholder="0" min="0" oninput="calculateBuildYourOwn()">
+            </div>
+        </div>
+
+        <!-- POLES SECTION -->
+        <label class="checkbox-group">
+            <input type="checkbox" id="byo-poles-toggle" onchange="togglePanel('byo-poles-panel', 'byo')">
+            <span>Add Support Poles</span>
+        </label>
+
+        <div id="byo-poles-panel" class="sub-panel">
+            <div class="form-grid-2">
+                <div class="form-group">
+                    <label for="byo-pole-type">Pole Tubing Profile</label>
+                    <select id="byo-pole-type" onchange="updateProfileRate('byo-pole-type', 'byo-pole-rate'); calculateBuildYourOwn();">
+                        <option value="0">Select Profile...</option>
+                        <option value="240">25 × 25 × 1.6 (Standard: R240 / meter)</option>
+                        <option value="315">25 × 50 × 1.6 (Standard: R315 / meter)</option>
+                        <option value="450">50 × 50 × 2.0 (Standard: R450 / meter)</option>
+                        <option value="640">76 × 76 × 2.0 (Standard: R640 / meter)</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="byo-pole-rate">Rate per Meter (R/m)</label>
+                    <input type="number" id="byo-pole-rate" placeholder="0" min="0" oninput="calculateBuildYourOwn()">
+                </div>
+                <div class="form-group">
+                    <label for="byo-pole-length">Length per Pole (m)</label>
+                    <input type="number" id="byo-pole-length" value="3" min="1" step="0.5" oninput="calculateBuildYourOwn()">
+                </div>
+                <div class="form-group">
+                    <label for="byo-poles-qty">Number of Poles</label>
+                    <input type="number" id="byo-poles-qty" value="2" min="1" oninput="calculateBuildYourOwn()">
+                </div>
+            </div>
+        </div>
+
+        <!-- BUILD YOUR OWN SUMMARY -->
+        <div class="summary-card">
+            <div class="summary-row">
+                <span>Board Area:</span>
+                <span><strong id="byo-board-area-display">0.00</strong> m²</span>
+            </div>
+            <div class="summary-row">
+                <span>Substrate Board Cost:</span>
+                <span id="byo-board-cost">R0.00</span>
+            </div>
+            <div class="summary-row">
+                <span>Side 1 Print Cost:</span>
+                <span id="byo-side1-cost">R0.00</span>
+            </div>
+            <div class="summary-row">
+                <span>Side 2 Print Cost:</span>
+                <span id="byo-side2-cost">R0.00</span>
+            </div>
+            <div class="summary-row">
+                <span>Steel Frame & Braces Cost:</span>
+                <span id="byo-frame-cost">R0.00</span>
+            </div>
+            <div class="summary-row">
+                <span>Aluminum Beading Cost:</span>
+                <span id="byo-beading-cost">R0.00</span>
+            </div>
+            <div class="summary-row">
+                <span>Support Poles:</span>
+                <span id="byo-pole-cost">R0.00</span>
+            </div>
+            <div class="summary-row total">
+                <span>Estimated Total (Excl. VAT):</span>
+                <span class="price" id="byo-total-cost">R0.00</span>
+            </div>
+        </div>
+
+        <button class="btn-primary" onclick="addItemToEstimate('build-own')">+ Add Item to Project Estimate</button>
+    </div>
+
+    <!-- TAB 7: PROJECT ESTIMATE CART -->
     <div id="estimate" class="tab-content">
         <h3 style="margin-bottom: 15px; font-size: 1.1rem; text-transform: uppercase; color: var(--text-main);">Project Quotation Items</h3>
         <div id="cart-items-container">
@@ -999,6 +1263,15 @@
 <script>
     let projectItems = [];
 
+    // Helper: Sync profile selection to manual price override input
+    function updateProfileRate(selectId, rateInputId) {
+        const select = document.getElementById(selectId);
+        const rateInput = document.getElementById(rateInputId);
+        if (select && rateInput) {
+            rateInput.value = select.value !== '0' ? select.value : '';
+        }
+    }
+
     // Main Tab Switcher
     function switchMainTab(tabId) {
         document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
@@ -1010,7 +1283,8 @@
             'abs': 2,
             'correx': 3,
             'safety': 4,
-            'estimate': 5
+            'build-own': 5,
+            'estimate': 6
         };
 
         if (tabMap.hasOwnProperty(tabId)) {
@@ -1028,6 +1302,7 @@
             else if (tabId === 'abs') calculateABS();
             else if (tabId === 'correx') calculateCorrex();
             else if (tabId === 'safety') calculateSafety();
+            else if (tabId === 'build-own') calculateBuildYourOwn();
             else if (tabId === 'estimate') renderCart();
         }
     }
@@ -1058,6 +1333,35 @@
         if (calcType === 'ch') calculateChromadek();
         if (calcType === 'acm-full') calculateACMFull();
         if (calcType === 'acm-router') calculateACMRouter();
+        if (calcType === 'byo') calculateBuildYourOwn();
+    }
+
+    // Toggle Build Your Own Second Side
+    function toggleByoSecondSide() {
+        const isDoubleSided = document.getElementById('byo-double-sided').checked;
+        const container = document.getElementById('byo-second-side-container');
+        container.style.display = isDoubleSided ? 'block' : 'none';
+    }
+
+    // Handle Supports Orientation Visibility
+    function handleSupportsOrientation(prefix) {
+        const orientation = document.getElementById(prefix + '-supports-orientation').value;
+        const vertGroup = document.getElementById(prefix + '-vert-qty-group');
+        const horizGroup = document.getElementById(prefix + '-horiz-qty-group');
+
+        if (orientation === 'vertical') {
+            vertGroup.style.display = 'flex';
+            horizGroup.style.display = 'none';
+        } else if (orientation === 'horizontal') {
+            vertGroup.style.display = 'none';
+            horizGroup.style.display = 'flex';
+        } else if (orientation === 'both') {
+            vertGroup.style.display = 'flex';
+            horizGroup.style.display = 'flex';
+        }
+
+        if (prefix === 'ch') calculateChromadek();
+        if (prefix === 'acm') calculateACMFull();
     }
 
     // CHROMADEK CALCULATIONS
@@ -1071,7 +1375,7 @@
 
         let frameCostUnit = 0;
         if (document.getElementById('ch-frame-toggle').checked) {
-            const ratePerMeter = parseFloat(document.getElementById('ch-frame-type').value) || 0;
+            const ratePerMeter = parseFloat(document.getElementById('ch-frame-rate').value) || parseFloat(document.getElementById('ch-frame-type').value) || 0;
             const wM = width / 1000;
             const hM = height / 1000;
             const frameLinearMeters = (wM * 2) + (hM * 2);
@@ -1079,25 +1383,32 @@
         }
 
         let supportsCostUnit = 0;
+        let supportsOrientation = 'vertical';
+        let supportsVertQty = 1;
+        let supportsHorizQty = 1;
+
         if (document.getElementById('ch-supports-toggle').checked) {
-            const ratePerMeter = parseFloat(document.getElementById('ch-supports-type').value) || 0;
-            const orientation = document.getElementById('ch-supports-orientation').value;
-            const supportsQty = parseInt(document.getElementById('ch-supports-qty').value) || 0;
+            const ratePerMeter = parseFloat(document.getElementById('ch-supports-rate').value) || parseFloat(document.getElementById('ch-supports-type').value) || 0;
+            supportsOrientation = document.getElementById('ch-supports-orientation').value;
+            supportsVertQty = parseInt(document.getElementById('ch-supports-vert-qty').value) || 0;
+            supportsHorizQty = parseInt(document.getElementById('ch-supports-horiz-qty').value) || 0;
             const wM = width / 1000;
             const hM = height / 1000;
 
             let supportLinearMeters = 0;
-            if (orientation === 'vertical') {
-                supportLinearMeters = hM * supportsQty;
-            } else {
-                supportLinearMeters = wM * supportsQty;
+            if (supportsOrientation === 'vertical') {
+                supportLinearMeters = hM * supportsVertQty;
+            } else if (supportsOrientation === 'horizontal') {
+                supportLinearMeters = wM * supportsHorizQty;
+            } else if (supportsOrientation === 'both') {
+                supportLinearMeters = (hM * supportsVertQty) + (wM * supportsHorizQty);
             }
             supportsCostUnit = supportLinearMeters * ratePerMeter;
         }
 
         let polesCostUnit = 0;
         if (document.getElementById('ch-poles-toggle').checked) {
-            const ratePerMeter = parseFloat(document.getElementById('ch-pole-type').value) || 0;
+            const ratePerMeter = parseFloat(document.getElementById('ch-pole-rate').value) || parseFloat(document.getElementById('ch-pole-type').value) || 0;
             const poleLength = parseFloat(document.getElementById('ch-pole-length').value) || 0;
             const poleQty = parseInt(document.getElementById('ch-poles-qty').value) || 0;
             polesCostUnit = (poleLength * poleQty) * ratePerMeter;
@@ -1131,12 +1442,16 @@
             qty: qty,
             frameToggle: document.getElementById('ch-frame-toggle').checked,
             frameType: document.getElementById('ch-frame-type').value,
+            frameRate: document.getElementById('ch-frame-rate').value,
             supportsToggle: document.getElementById('ch-supports-toggle').checked,
             supportsType: document.getElementById('ch-supports-type').value,
-            supportsOrientation: document.getElementById('ch-supports-orientation').value,
-            supportsQty: document.getElementById('ch-supports-qty').value,
+            supportsRate: document.getElementById('ch-supports-rate').value,
+            supportsOrientation: supportsOrientation,
+            supportsVertQty: supportsVertQty,
+            supportsHorizQty: supportsHorizQty,
             polesToggle: document.getElementById('ch-poles-toggle').checked,
             poleType: document.getElementById('ch-pole-type').value,
+            poleRate: document.getElementById('ch-pole-rate').value,
             poleLength: document.getElementById('ch-pole-length').value,
             polesQty: document.getElementById('ch-poles-qty').value,
             beadingToggle: document.getElementById('ch-beading-toggle').checked,
@@ -1156,7 +1471,7 @@
 
         let frameCostUnit = 0;
         if (document.getElementById('acm-frame-toggle').checked) {
-            const ratePerMeter = parseFloat(document.getElementById('acm-frame-type').value) || 0;
+            const ratePerMeter = parseFloat(document.getElementById('acm-frame-rate').value) || parseFloat(document.getElementById('acm-frame-type').value) || 0;
             const wM = width / 1000;
             const hM = height / 1000;
             const frameLinearMeters = (wM * 2) + (hM * 2);
@@ -1164,25 +1479,32 @@
         }
 
         let supportsCostUnit = 0;
+        let supportsOrientation = 'vertical';
+        let supportsVertQty = 1;
+        let supportsHorizQty = 1;
+
         if (document.getElementById('acm-supports-toggle').checked) {
-            const ratePerMeter = parseFloat(document.getElementById('acm-supports-type').value) || 0;
-            const orientation = document.getElementById('acm-supports-orientation').value;
-            const supportsQty = parseInt(document.getElementById('acm-supports-qty').value) || 0;
+            const ratePerMeter = parseFloat(document.getElementById('acm-supports-rate').value) || parseFloat(document.getElementById('acm-supports-type').value) || 0;
+            supportsOrientation = document.getElementById('acm-supports-orientation').value;
+            supportsVertQty = parseInt(document.getElementById('acm-supports-vert-qty').value) || 0;
+            supportsHorizQty = parseInt(document.getElementById('acm-supports-horiz-qty').value) || 0;
             const wM = width / 1000;
             const hM = height / 1000;
 
             let supportLinearMeters = 0;
-            if (orientation === 'vertical') {
-                supportLinearMeters = hM * supportsQty;
-            } else {
-                supportLinearMeters = wM * supportsQty;
+            if (supportsOrientation === 'vertical') {
+                supportLinearMeters = hM * supportsVertQty;
+            } else if (supportsOrientation === 'horizontal') {
+                supportLinearMeters = wM * supportsHorizQty;
+            } else if (supportsOrientation === 'both') {
+                supportLinearMeters = (hM * supportsVertQty) + (wM * supportsHorizQty);
             }
             supportsCostUnit = supportLinearMeters * ratePerMeter;
         }
 
         let polesCostUnit = 0;
         if (document.getElementById('acm-poles-toggle').checked) {
-            const ratePerMeter = parseFloat(document.getElementById('acm-pole-type').value) || 0;
+            const ratePerMeter = parseFloat(document.getElementById('acm-pole-rate').value) || parseFloat(document.getElementById('acm-pole-type').value) || 0;
             const poleLength = parseFloat(document.getElementById('acm-pole-length').value) || 0;
             const poleQty = parseInt(document.getElementById('acm-poles-qty').value) || 0;
             polesCostUnit = (poleLength * poleQty) * ratePerMeter;
@@ -1216,12 +1538,16 @@
             qty: qty,
             frameToggle: document.getElementById('acm-frame-toggle').checked,
             frameType: document.getElementById('acm-frame-type').value,
+            frameRate: document.getElementById('acm-frame-rate').value,
             supportsToggle: document.getElementById('acm-supports-toggle').checked,
             supportsType: document.getElementById('acm-supports-type').value,
-            supportsOrientation: document.getElementById('acm-supports-orientation').value,
-            supportsQty: document.getElementById('acm-supports-qty').value,
+            supportsRate: document.getElementById('acm-supports-rate').value,
+            supportsOrientation: supportsOrientation,
+            supportsVertQty: supportsVertQty,
+            supportsHorizQty: supportsHorizQty,
             polesToggle: document.getElementById('acm-poles-toggle').checked,
             poleType: document.getElementById('acm-pole-type').value,
+            poleRate: document.getElementById('acm-pole-rate').value,
             poleLength: document.getElementById('acm-pole-length').value,
             polesQty: document.getElementById('acm-poles-qty').value,
             beadingToggle: document.getElementById('acm-beading-toggle').checked,
@@ -1348,6 +1674,91 @@
         };
     }
 
+    // BUILD YOUR OWN CALCULATOR
+    function calculateBuildYourOwn() {
+        const widthMm = parseFloat(document.getElementById('byo-width').value) || 0;
+        const heightMm = parseFloat(document.getElementById('byo-height').value) || 0;
+        const qty = parseInt(document.getElementById('byo-qty').value) || 1;
+        const isDoubleSided = document.getElementById('byo-double-sided').checked;
+
+        const boardRate = parseFloat(document.getElementById('byo-board-type').value) || 0;
+        const side1VinylRate = parseFloat(document.getElementById('byo-side1-vinyl').value) || 0;
+        const side2VinylRate = parseFloat(document.getElementById('byo-side2-vinyl').value) || 0;
+        const steelRate = parseFloat(document.getElementById('byo-steel-rate').value) || parseFloat(document.getElementById('byo-steel-profile').value) || 0;
+        const beadingRate = parseFloat(document.getElementById('byo-beading-rate').value) || parseFloat(document.getElementById('byo-beading').value) || 0;
+
+        const vertBraces = parseInt(document.getElementById('byo-vert-braces').value) || 0;
+        const horizBraces = parseInt(document.getElementById('byo-horiz-braces').value) || 0;
+
+        let poleCost = 0;
+        let polesToggle = document.getElementById('byo-poles-toggle').checked;
+        let poleType = document.getElementById('byo-pole-type').value;
+        let poleRate = parseFloat(document.getElementById('byo-pole-rate').value) || parseFloat(poleType) || 0;
+        let poleLength = parseFloat(document.getElementById('byo-pole-length').value) || 0;
+        let polesQty = parseInt(document.getElementById('byo-poles-qty').value) || 0;
+
+        if (polesToggle) {
+            poleCost = (poleLength * polesQty) * poleRate;
+        }
+
+        const widthM = widthMm / 1000;
+        const heightM = heightMm / 1000;
+
+        const singleBoardArea = widthM * heightM;
+        const totalBoardArea = singleBoardArea * qty;
+        const outerPerimeterM = (widthM + heightM) * 2;
+
+        const totalVertBraceLength = vertBraces * heightM;
+        const totalHorizBraceLength = horizBraces * widthM;
+        const totalSteelMeters = (outerPerimeterM + totalVertBraceLength + totalHorizBraceLength) * qty;
+
+        const totalBeadingMeters = outerPerimeterM * qty;
+
+        const boardCost = totalBoardArea * boardRate;
+        const side1Cost = totalBoardArea * side1VinylRate;
+        const side2Cost = isDoubleSided ? (totalBoardArea * side2VinylRate) : 0;
+        const frameCost = totalSteelMeters * steelRate;
+        const beadingCost = totalBeadingMeters * beadingRate;
+
+        const grandTotal = boardCost + side1Cost + side2Cost + frameCost + beadingCost + poleCost;
+
+        document.getElementById('byo-board-area-display').innerText = totalBoardArea.toFixed(2);
+        document.getElementById('byo-board-cost').innerText = `R${boardCost.toFixed(2)}`;
+        document.getElementById('byo-side1-cost').innerText = `R${side1Cost.toFixed(2)}`;
+        document.getElementById('byo-side2-cost').innerText = `R${side2Cost.toFixed(2)}`;
+        document.getElementById('byo-frame-cost').innerText = `R${frameCost.toFixed(2)}`;
+        document.getElementById('byo-beading-cost').innerText = `R${beadingCost.toFixed(2)}`;
+        document.getElementById('byo-pole-cost').innerText = `R${poleCost.toFixed(2)}`;
+        document.getElementById('byo-total-cost').innerText = `R${grandTotal.toFixed(2)}`;
+
+        return {
+            name: document.getElementById('byo-name').value.trim() || 'Custom Built Sign',
+            type: 'Build Your Own',
+            calcType: 'build-own',
+            width: widthMm,
+            height: heightMm,
+            qty: qty,
+            dimensions: `${widthMm}mm × ${heightMm}mm`,
+            total: grandTotal,
+
+            boardRate: boardRate,
+            side1VinylRate: side1VinylRate,
+            side2VinylRate: side2VinylRate,
+            isDoubleSided: isDoubleSided,
+            steelRate: steelRate,
+            steelRateCustom: document.getElementById('byo-steel-rate').value,
+            beadingRate: beadingRate,
+            beadingRateCustom: document.getElementById('byo-beading-rate').value,
+            vertBraces: vertBraces,
+            horizBraces: horizBraces,
+            polesToggle: polesToggle,
+            poleType: poleType,
+            poleRate: document.getElementById('byo-pole-rate').value,
+            poleLength: poleLength,
+            polesQty: polesQty
+        };
+    }
+
     // RESET FORM FIELDS
     function resetForm(calcType) {
         if (calcType === 'chromadek') {
@@ -1359,15 +1770,21 @@
             document.getElementById('ch-frame-toggle').checked = false;
             document.getElementById('ch-frame-panel').classList.remove('open');
             document.getElementById('ch-frame-type').value = '0';
+            document.getElementById('ch-frame-rate').value = '';
 
             document.getElementById('ch-supports-toggle').checked = false;
             document.getElementById('ch-supports-panel').classList.remove('open');
             document.getElementById('ch-supports-type').value = '0';
-            document.getElementById('ch-supports-qty').value = '1';
+            document.getElementById('ch-supports-rate').value = '';
+            document.getElementById('ch-supports-orientation').value = 'vertical';
+            document.getElementById('ch-supports-vert-qty').value = '1';
+            document.getElementById('ch-supports-horiz-qty').value = '1';
+            handleSupportsOrientation('ch');
 
             document.getElementById('ch-poles-toggle').checked = false;
             document.getElementById('ch-poles-panel').classList.remove('open');
             document.getElementById('ch-pole-type').value = '0';
+            document.getElementById('ch-pole-rate').value = '';
             document.getElementById('ch-pole-length').value = '3';
             document.getElementById('ch-poles-qty').value = '2';
 
@@ -1382,15 +1799,21 @@
             document.getElementById('acm-frame-toggle').checked = false;
             document.getElementById('acm-frame-panel').classList.remove('open');
             document.getElementById('acm-frame-type').value = '0';
+            document.getElementById('acm-frame-rate').value = '';
 
             document.getElementById('acm-supports-toggle').checked = false;
             document.getElementById('acm-supports-panel').classList.remove('open');
             document.getElementById('acm-supports-type').value = '0';
-            document.getElementById('acm-supports-qty').value = '1';
+            document.getElementById('acm-supports-rate').value = '';
+            document.getElementById('acm-supports-orientation').value = 'vertical';
+            document.getElementById('acm-supports-vert-qty').value = '1';
+            document.getElementById('acm-supports-horiz-qty').value = '1';
+            handleSupportsOrientation('acm');
 
             document.getElementById('acm-poles-toggle').checked = false;
             document.getElementById('acm-poles-panel').classList.remove('open');
             document.getElementById('acm-pole-type').value = '0';
+            document.getElementById('acm-pole-rate').value = '';
             document.getElementById('acm-pole-length').value = '3';
             document.getElementById('acm-poles-qty').value = '2';
 
@@ -1426,6 +1849,31 @@
             document.getElementById('safety-height').value = '';
             document.getElementById('safety-qty').value = '1';
             calculateSafety();
+        } else if (calcType === 'build-own') {
+            document.getElementById('byo-name').value = '';
+            document.getElementById('byo-width').value = '';
+            document.getElementById('byo-height').value = '';
+            document.getElementById('byo-qty').value = '1';
+            document.getElementById('byo-double-sided').checked = false;
+            toggleByoSecondSide();
+            document.getElementById('byo-board-type').value = '0';
+            document.getElementById('byo-side1-vinyl').value = '0';
+            document.getElementById('byo-side2-vinyl').value = '0';
+            document.getElementById('byo-steel-profile').value = '0';
+            document.getElementById('byo-steel-rate').value = '';
+            document.getElementById('byo-beading').value = '0';
+            document.getElementById('byo-beading-rate').value = '';
+            document.getElementById('byo-vert-braces').value = '';
+            document.getElementById('byo-horiz-braces').value = '';
+            
+            document.getElementById('byo-poles-toggle').checked = false;
+            document.getElementById('byo-poles-panel').classList.remove('open');
+            document.getElementById('byo-pole-type').value = '0';
+            document.getElementById('byo-pole-rate').value = '';
+            document.getElementById('byo-pole-length').value = '3';
+            document.getElementById('byo-poles-qty').value = '2';
+
+            calculateBuildYourOwn();
         }
     }
 
@@ -1444,6 +1892,8 @@
             itemData = calculateCorrex();
         } else if (calcType === 'safety') {
             itemData = calculateSafety();
+        } else if (calcType === 'build-own') {
+            itemData = calculateBuildYourOwn();
         }
 
         if (!itemData || itemData.total <= 0) {
@@ -1467,7 +1917,6 @@
         const item = projectItems.find(i => i.id === id);
         if (!item) return;
 
-        // Remove from cart temporarily while editing
         removeCartItem(id);
 
         if (item.calcType === 'chromadek') {
@@ -1480,16 +1929,21 @@
             document.getElementById('ch-frame-toggle').checked = item.frameToggle;
             if(item.frameToggle) document.getElementById('ch-frame-panel').classList.add('open');
             document.getElementById('ch-frame-type').value = item.frameType;
+            document.getElementById('ch-frame-rate').value = item.frameRate;
 
             document.getElementById('ch-supports-toggle').checked = item.supportsToggle;
             if(item.supportsToggle) document.getElementById('ch-supports-panel').classList.add('open');
             document.getElementById('ch-supports-type').value = item.supportsType;
-            document.getElementById('ch-supports-orientation').value = item.supportsOrientation;
-            document.getElementById('ch-supports-qty').value = item.supportsQty;
+            document.getElementById('ch-supports-rate').value = item.supportsRate;
+            document.getElementById('ch-supports-orientation').value = item.supportsOrientation || 'vertical';
+            document.getElementById('ch-supports-vert-qty').value = item.supportsVertQty !== undefined ? item.supportsVertQty : (item.supportsQty || 1);
+            document.getElementById('ch-supports-horiz-qty').value = item.supportsHorizQty !== undefined ? item.supportsHorizQty : 1;
+            handleSupportsOrientation('ch');
 
             document.getElementById('ch-poles-toggle').checked = item.polesToggle;
             if(item.polesToggle) document.getElementById('ch-poles-panel').classList.add('open');
             document.getElementById('ch-pole-type').value = item.poleType;
+            document.getElementById('ch-pole-rate').value = item.poleRate;
             document.getElementById('ch-pole-length').value = item.poleLength;
             document.getElementById('ch-poles-qty').value = item.polesQty;
 
@@ -1507,16 +1961,21 @@
             document.getElementById('acm-frame-toggle').checked = item.frameToggle;
             if(item.frameToggle) document.getElementById('acm-frame-panel').classList.add('open');
             document.getElementById('acm-frame-type').value = item.frameType;
+            document.getElementById('acm-frame-rate').value = item.frameRate;
 
             document.getElementById('acm-supports-toggle').checked = item.supportsToggle;
             if(item.supportsToggle) document.getElementById('acm-supports-panel').classList.add('open');
             document.getElementById('acm-supports-type').value = item.supportsType;
-            document.getElementById('acm-supports-orientation').value = item.supportsOrientation;
-            document.getElementById('acm-supports-qty').value = item.supportsQty;
+            document.getElementById('acm-supports-rate').value = item.supportsRate;
+            document.getElementById('acm-supports-orientation').value = item.supportsOrientation || 'vertical';
+            document.getElementById('acm-supports-vert-qty').value = item.supportsVertQty !== undefined ? item.supportsVertQty : (item.supportsQty || 1);
+            document.getElementById('acm-supports-horiz-qty').value = item.supportsHorizQty !== undefined ? item.supportsHorizQty : 1;
+            handleSupportsOrientation('acm');
 
             document.getElementById('acm-poles-toggle').checked = item.polesToggle;
             if(item.polesToggle) document.getElementById('acm-poles-panel').classList.add('open');
             document.getElementById('acm-pole-type').value = item.poleType;
+            document.getElementById('acm-pole-rate').value = item.poleRate;
             document.getElementById('acm-pole-length').value = item.poleLength;
             document.getElementById('acm-poles-qty').value = item.polesQty;
 
@@ -1561,6 +2020,33 @@
             document.getElementById('safety-height').value = item.height;
             document.getElementById('safety-qty').value = item.qty;
             calculateSafety();
+
+        } else if (item.calcType === 'build-own') {
+            switchMainTab('build-own');
+            document.getElementById('byo-name').value = item.name;
+            document.getElementById('byo-width').value = item.width;
+            document.getElementById('byo-height').value = item.height;
+            document.getElementById('byo-qty').value = item.qty;
+            document.getElementById('byo-double-sided').checked = item.isDoubleSided;
+            toggleByoSecondSide();
+            document.getElementById('byo-board-type').value = item.boardRate;
+            document.getElementById('byo-side1-vinyl').value = item.side1VinylRate;
+            if(item.isDoubleSided) document.getElementById('byo-side2-vinyl').value = item.side2VinylRate;
+            document.getElementById('byo-steel-profile').value = item.steelRate;
+            document.getElementById('byo-steel-rate').value = item.steelRateCustom;
+            document.getElementById('byo-beading').value = item.beadingRate;
+            document.getElementById('byo-beading-rate').value = item.beadingRateCustom;
+            document.getElementById('byo-vert-braces').value = item.vertBraces;
+            document.getElementById('byo-horiz-braces').value = item.horizBraces;
+
+            document.getElementById('byo-poles-toggle').checked = item.polesToggle;
+            if(item.polesToggle) document.getElementById('byo-poles-panel').classList.add('open');
+            document.getElementById('byo-pole-type').value = item.poleType;
+            document.getElementById('byo-pole-rate').value = item.poleRate;
+            document.getElementById('byo-pole-length').value = item.poleLength;
+            document.getElementById('byo-poles-qty').value = item.polesQty;
+
+            calculateBuildYourOwn();
         }
     }
 
@@ -1670,6 +2156,11 @@
         const mailtoLink = `mailto:${salespersonEmail}?subject=${encodeURIComponent('Signage Estimate: ' + projectName)}&body=${encodeURIComponent(emailBody)}`;
         window.location.href = mailtoLink;
     }
+
+    window.onload = function() {
+        toggleByoSecondSide();
+        calculateBuildYourOwn();
+    };
 </script>
 
 </body>
