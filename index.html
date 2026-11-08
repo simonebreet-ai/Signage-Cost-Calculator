@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Signage Cost Calculator & Estimator</title>
+    <title>Signage & Lighting Cost Estimator</title>
     <style>
         :root {
             --bg-color: #0b0b0b;
@@ -17,6 +17,7 @@
             --success-green: #28a745;
             --edit-blue: #17a2b8;
             --edit-blue-hover: #138496;
+            --accent-yellow: #ffc107;
         }
 
         * {
@@ -55,7 +56,7 @@
             border-top: 4px solid var(--accent-red);
             border-radius: 12px;
             width: 100%;
-            max-width: 850px;
+            max-width: 900px;
             box-shadow: 0 15px 40px rgba(0, 0, 0, 0.9), 0 0 20px rgba(229, 9, 20, 0.15);
             overflow: hidden;
             backdrop-filter: blur(10px);
@@ -109,12 +110,12 @@
 
         .tab-btn {
             flex: 1;
-            min-width: 110px;
-            padding: 14px 8px;
+            min-width: 100px;
+            padding: 14px 6px;
             background: none;
             border: none;
             color: var(--text-muted);
-            font-size: 0.8rem;
+            font-size: 0.78rem;
             font-weight: 600;
             cursor: pointer;
             transition: all 0.2s ease;
@@ -132,6 +133,10 @@
             color: var(--text-main);
             border-bottom: 3px solid var(--accent-red);
             background-color: var(--card-bg);
+        }
+
+        .tab-btn.lighting-tab.active {
+            border-bottom-color: var(--accent-yellow);
         }
 
         /* Sub-Tabs UI */
@@ -283,6 +288,10 @@
             letter-spacing: 1px;
         }
 
+        .section-title.yellow-title {
+            color: var(--accent-yellow);
+        }
+
         /* Buttons */
         .btn-primary {
             background-color: var(--accent-red);
@@ -366,6 +375,10 @@
             margin-top: 20px;
         }
 
+        .summary-card.lighting-summary {
+            border-left-color: var(--accent-yellow);
+        }
+
         .summary-row {
             display: flex;
             justify-content: space-between;
@@ -385,6 +398,10 @@
 
         .summary-row.total .price {
             color: var(--accent-red);
+        }
+
+        .summary-row.total .price.yellow-price {
+            color: var(--accent-yellow);
         }
 
         /* Estimate Cart Table */
@@ -438,8 +455,22 @@
             font-style: italic;
         }
 
-        @media (max-width: 600px) {
+        .badge {
+            background: rgba(255, 193, 7, 0.15);
+            color: var(--accent-yellow);
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            display: inline-block;
+            margin-bottom: 4px;
+        }
+
+        @media (max-width: 650px) {
             .form-grid {
+                grid-template-columns: 1fr;
+            }
+            .form-grid-2 {
                 grid-template-columns: 1fr;
             }
             .form-group.full-width {
@@ -491,6 +522,7 @@
         <button class="tab-btn" onclick="switchMainTab('abs')">ABS</button>
         <button class="tab-btn" onclick="switchMainTab('correx')">Correx</button>
         <button class="tab-btn" onclick="switchMainTab('safety')">Safety Signs</button>
+        <button class="tab-btn lighting-tab" onclick="switchMainTab('lighting')">Lighting & LEDs</button>
         <button class="tab-btn" onclick="switchMainTab('build-own')">Build Your Own</button>
         <button class="tab-btn" onclick="switchMainTab('estimate')">Project Estimate (<span id="cart-count">0</span>)</button>
     </div>
@@ -1025,7 +1057,120 @@
         <button class="btn-primary" onclick="addItemToEstimate('safety')">+ Add Item to Project Estimate</button>
     </div>
 
-    <!-- TAB 6: BUILD YOUR OWN -->
+    <!-- TAB 6: LIGHTING & LEDS (NEW TAB) -->
+    <div id="lighting" class="tab-content">
+        <div class="form-group">
+            <label for="led-name">Item Name / Reference</label>
+            <input type="text" id="led-name" placeholder="e.g. Halo-Lit Storefront Neon & Strip">
+        </div>
+
+        <div class="section-title yellow-title" style="margin-top: 0;">1. Light / LED Specification</div>
+        <div class="form-group">
+            <label for="led-type">Select Light Type</label>
+            <select id="led-type" onchange="calculateLighting()">
+                <option value="360|6|LED Strip Light (6W/m)">LED Strip Light - 6W/m (R360 / meter)</option>
+                <option value="582|6|Mini Modules (6W/m)">Mini Modules - 6W/m (R582 / meter)</option>
+                <option value="275|9.6|Modules (9.6W/m)">Modules - 9.6W/m (R275 / meter)</option>
+                <option value="360|7.5|Flexi Strip Light (7.5W/m)">Flexi Strip Light - 7.5W/m (R360 / meter)</option>
+                <option value="540|7.5|Neon Flex Standard (7.5W/m)">Neon Flex Standard - 7.5W/m (R540 / meter)</option>
+                <option value="795|7.5|Neon Flex RGB (7.5W/m)">Neon Flex RGB - 7.5W/m (R795 / meter)</option>
+                <option value="410|1.5|EDGE 1.5W Lighting">EDGE 1.5W Lighting (R410 / meter)</option>
+                <option value="475|2|EDGE 2W Lighting">EDGE 2W Lighting (R475 / meter)</option>
+                <option value="647|3|EDGE 3W Lighting">EDGE 3W Lighting (R647 / meter)</option>
+                <option value="900|10|EDGE Bar Lighting">EDGE Bar Lighting (R900 / meter)</option>
+            </select>
+        </div>
+
+        <div class="form-grid">
+            <div class="form-group">
+                <label for="led-meters">Total Meters Required</label>
+                <input type="number" id="led-meters" placeholder="e.g. 30" min="0" step="0.1" oninput="calculateLighting()">
+            </div>
+            <div class="form-group">
+                <label for="led-qty">Quantity of Runs/Sets</label>
+                <input type="number" id="led-qty" value="1" min="1" oninput="calculateLighting()">
+            </div>
+            <div class="form-group">
+                <label for="led-headroom">Safety Factor (Rule of Thumb)</label>
+                <select id="led-headroom" onchange="calculateLighting()">
+                    <option value="1.2">1.2× (+20% Headroom - Standard)</option>
+                    <option value="1.15">1.15× (+15% Headroom)</option>
+                    <option value="1.25">1.25× (+25% Headroom)</option>
+                    <option value="1.0">1.0× (No Headroom Buffer)</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="section-title yellow-title">2. Power Supply & Transformer Setup</div>
+        <div class="form-grid-2">
+            <div class="form-group">
+                <label for="led-trans-environment">Environment / Rating</label>
+                <select id="led-trans-environment" onchange="calculateLighting()">
+                    <option value="outdoor">Outdoor (IP67 Weatherproof)</option>
+                    <option value="indoor">Indoor (IP20 Standard)</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="led-trans-mode">Transformer Mode</label>
+                <select id="led-trans-mode" onchange="toggleTransMode(); calculateLighting();">
+                    <option value="auto">Auto-Calculate Minimum Required Transformer</option>
+                    <option value="manual">Manual Select Transformer</option>
+                    <option value="none">No Transformer (Lights Only)</option>
+                </select>
+            </div>
+        </div>
+
+        <div id="led-manual-trans-panel" class="sub-panel">
+            <div class="form-grid-2">
+                <div class="form-group">
+                    <label for="led-manual-trans-select">Select Transformer Model</label>
+                    <select id="led-manual-trans-select" onchange="calculateLighting()">
+                        <!-- Filled dynamically based on environment -->
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="led-manual-trans-qty">Transformer Qty (per run)</label>
+                    <input type="number" id="led-manual-trans-qty" value="1" min="1" oninput="calculateLighting()">
+                </div>
+            </div>
+        </div>
+
+        <!-- LIGHTING & LED SUMMARY -->
+        <div class="summary-card lighting-summary">
+            <div class="summary-row">
+                <span>Total Linear LED Meters:</span>
+                <span id="led-total-meters-display">0.00 m</span>
+            </div>
+            <div class="summary-row">
+                <span>Base Power Draw:</span>
+                <span id="led-base-watts-display">0.0 W</span>
+            </div>
+            <div class="summary-row">
+                <span>Recommended Capacity (after Headroom):</span>
+                <span><strong id="led-req-watts-display" style="color: var(--accent-yellow);">0.0 W</strong></span>
+            </div>
+            <div class="summary-row">
+                <span>LED Light Strip Cost:</span>
+                <span id="led-strip-cost-display">R0.00</span>
+            </div>
+            <div class="summary-row">
+                <span>Assigned Transformer(s):</span>
+                <span id="led-trans-assigned-display">Auto Sizing...</span>
+            </div>
+            <div class="summary-row">
+                <span>Transformer Cost:</span>
+                <span id="led-trans-cost-display">R0.00</span>
+            </div>
+            <div class="summary-row total">
+                <span>Estimated Lighting Total (Excl. VAT):</span>
+                <span class="price yellow-price" id="led-total-cost">R0.00</span>
+            </div>
+        </div>
+
+        <button class="btn-primary" style="background-color: var(--accent-yellow); color: #000;" onclick="addItemToEstimate('lighting')">+ Add Lighting Item to Project Estimate</button>
+    </div>
+
+    <!-- TAB 7: BUILD YOUR OWN -->
     <div id="build-own" class="tab-content">
         <div class="form-group">
             <label for="byo-name">Item Name / Reference</label>
@@ -1071,7 +1216,6 @@
                 <option value="850">Correx Board 5mm (R350/m²)</option>
                 <option value="1000">MFoam (R1,000/m²)</option>
                 <option value="1150">Vehicle Magnets (R1,150/m²)</option>
-
             </select>
         </div>
 
@@ -1234,7 +1378,7 @@
         <button class="btn-primary" onclick="addItemToEstimate('build-own')">+ Add Item to Project Estimate</button>
     </div>
 
-    <!-- TAB 7: PROJECT ESTIMATE CART -->
+    <!-- TAB 8: PROJECT ESTIMATE CART -->
     <div id="estimate" class="tab-content">
         <h3 style="margin-bottom: 15px; font-size: 1.1rem; text-transform: uppercase; color: var(--text-main);">Project Quotation Items</h3>
         <div id="cart-items-container">
@@ -1263,6 +1407,29 @@
 <script>
     let projectItems = [];
 
+    // Outdoor & Indoor Transformer Catalog Datasets
+    const TRANSFORMERS_OUTDOOR = [
+        { watts: 30, price: 450 },
+        { watts: 60, price: 650 },
+        { watts: 100, price: 950 },
+        { watts: 150, price: 1250 },
+        { watts: 200, price: 1700 },
+        { watts: 300, price: 2100 },
+        { watts: 400, price: 2400 }
+    ];
+
+    const TRANSFORMERS_INDOOR = [
+        { watts: 15, price: 240 },
+        { watts: 35, price: 390 },
+        { watts: 50, price: 490 },
+        { watts: 75, price: 490 },
+        { watts: 100, price: 590 },
+        { watts: 150, price: 650 },
+        { watts: 200, price: 850 },
+        { watts: 300, price: 1050 },
+        { watts: 400, price: 1390 }
+    ];
+
     // Helper: Sync profile selection to manual price override input
     function updateProfileRate(selectId, rateInputId) {
         const select = document.getElementById(selectId);
@@ -1283,8 +1450,9 @@
             'abs': 2,
             'correx': 3,
             'safety': 4,
-            'build-own': 5,
-            'estimate': 6
+            'lighting': 5,
+            'build-own': 6,
+            'estimate': 7
         };
 
         if (tabMap.hasOwnProperty(tabId)) {
@@ -1302,6 +1470,7 @@
             else if (tabId === 'abs') calculateABS();
             else if (tabId === 'correx') calculateCorrex();
             else if (tabId === 'safety') calculateSafety();
+            else if (tabId === 'lighting') calculateLighting();
             else if (tabId === 'build-own') calculateBuildYourOwn();
             else if (tabId === 'estimate') renderCart();
         }
@@ -1334,6 +1503,32 @@
         if (calcType === 'acm-full') calculateACMFull();
         if (calcType === 'acm-router') calculateACMRouter();
         if (calcType === 'byo') calculateBuildYourOwn();
+        if (calcType === 'lighting') calculateLighting();
+    }
+
+    // Toggle Lighting Manual Transformer Panel
+    function toggleTransMode() {
+        const mode = document.getElementById('led-trans-mode').value;
+        const panel = document.getElementById('led-manual-trans-panel');
+        if (mode === 'manual') {
+            panel.classList.add('open');
+            populateManualTransformerDropdown();
+        } else {
+            panel.classList.remove('open');
+        }
+    }
+
+    // Populate Manual Transformer Dropdown based on environment
+    function populateManualTransformerDropdown() {
+        const env = document.getElementById('led-trans-environment').value;
+        const select = document.getElementById('led-manual-trans-select');
+        const list = env === 'outdoor' ? TRANSFORMERS_OUTDOOR : TRANSFORMERS_INDOOR;
+
+        let html = '';
+        list.forEach(item => {
+            html += `<option value="${item.watts}|${item.price}">${item.watts}W (${env.toUpperCase()}) - R${item.price.toLocaleString()}</option>`;
+        });
+        select.innerHTML = html;
     }
 
     // Toggle Build Your Own Second Side
@@ -1674,6 +1869,107 @@
         };
     }
 
+    // LIGHTING & LEDS CALCULATOR
+    function calculateLighting() {
+        const ledTypeVal = document.getElementById('led-type').value.split('|');
+        const ratePerMeter = parseFloat(ledTypeVal[0]) || 0;
+        const wattsPerMeter = parseFloat(ledTypeVal[1]) || 0;
+        const ledTypeName = ledTypeVal[2] || 'LED Strip Light';
+
+        const meters = parseFloat(document.getElementById('led-meters').value) || 0;
+        const qty = parseInt(document.getElementById('led-qty').value) || 1;
+        const safetyFactor = parseFloat(document.getElementById('led-headroom').value) || 1.2;
+
+        const env = document.getElementById('led-trans-environment').value;
+        const transMode = document.getElementById('led-trans-mode').value;
+
+        // Base Watts & Headroom Watts
+        const baseWatts = meters * wattsPerMeter;
+        const requiredWatts = baseWatts * safetyFactor;
+        const lightStripCostUnit = meters * ratePerMeter;
+
+        let transCostUnit = 0;
+        let transDescription = "None";
+
+        const transCatalog = env === 'outdoor' ? TRANSFORMERS_OUTDOOR : TRANSFORMERS_INDOOR;
+        const envLabel = env.toUpperCase();
+
+        if (transMode === 'auto') {
+            if (requiredWatts > 0) {
+                if (requiredWatts <= 400) {
+                    // Pick smallest single transformer that fits requiredWatts
+                    const matchedTrans = transCatalog.find(t => t.watts >= requiredWatts) || transCatalog[transCatalog.length - 1];
+                    transCostUnit = matchedTrans.price;
+                    transDescription = `1× ${matchedTrans.watts}W (${envLabel}) - R${matchedTrans.price}`;
+                } else {
+                    // Requires multiple transformers (e.g. 400W units + remaining)
+                    const num400w = Math.floor(requiredWatts / 400);
+                    const remainderWatts = requiredWatts % 400;
+                    
+                    let totalTransCost = num400w * transCatalog.find(t => t.watts === 400).price;
+                    let descParts = [`${num400w}× 400W`];
+
+                    if (remainderWatts > 0) {
+                        const remainderTrans = transCatalog.find(t => t.watts >= remainderWatts) || transCatalog[transCatalog.length - 1];
+                        totalTransCost += remainderTrans.price;
+                        descParts.push(`1× ${remainderTrans.watts}W`);
+                    }
+
+                    transCostUnit = totalTransCost;
+                    transDescription = `${descParts.join(' + ')} (${envLabel})`;
+                }
+            } else {
+                transDescription = "None Required";
+            }
+        } else if (transMode === 'manual') {
+            const manualVal = document.getElementById('led-manual-trans-select').value.split('|');
+            const manualWatts = parseFloat(manualVal[0]) || 0;
+            const manualPrice = parseFloat(manualVal[1]) || 0;
+            const manualTransQty = parseInt(document.getElementById('led-manual-trans-qty').value) || 1;
+
+            transCostUnit = manualPrice * manualTransQty;
+            transDescription = `${manualTransQty}× ${manualWatts}W (${envLabel}) - R${transCostUnit.toFixed(2)}`;
+        } else if (transMode === 'none') {
+            transCostUnit = 0;
+            transDescription = "Excluded";
+        }
+
+        const unitTotalCost = lightStripCostUnit + transCostUnit;
+        const grandTotalCost = unitTotalCost * qty;
+
+        // UI Displays
+        document.getElementById('led-total-meters-display').innerText = `${meters.toFixed(2)} m`;
+        document.getElementById('led-base-watts-display').innerText = `${baseWatts.toFixed(1)} W`;
+        document.getElementById('led-req-watts-display').innerText = `${requiredWatts.toFixed(1)} W (${safetyFactor}× Headroom)`;
+        document.getElementById('led-strip-cost-display').innerText = 'R' + (lightStripCostUnit * qty).toFixed(2);
+        document.getElementById('led-trans-assigned-display').innerText = transDescription;
+        document.getElementById('led-trans-cost-display').innerText = 'R' + (transCostUnit * qty).toFixed(2);
+        document.getElementById('led-total-cost').innerText = 'R' + grandTotalCost.toFixed(2);
+
+        return {
+            name: document.getElementById('led-name').value.trim() || `${ledTypeName} (${meters}m)`,
+            type: 'Lighting & LEDs',
+            calcType: 'lighting',
+            ledTypeVal: document.getElementById('led-type').value,
+            ledTypeName: ledTypeName,
+            meters: meters,
+            qty: qty,
+            wattsPerMeter: wattsPerMeter,
+            baseWatts: baseWatts,
+            safetyFactor: safetyFactor,
+            requiredWatts: requiredWatts,
+            env: env,
+            transMode: transMode,
+            transDescription: transDescription,
+            dimensions: `${meters}m linear (${wattsPerMeter}W/m)`,
+            total: grandTotalCost,
+            
+            // Edit Restore State
+            manualTransVal: document.getElementById('led-manual-trans-select').value,
+            manualTransQty: document.getElementById('led-manual-trans-qty').value
+        };
+    }
+
     // BUILD YOUR OWN CALCULATOR
     function calculateBuildYourOwn() {
         const widthMm = parseFloat(document.getElementById('byo-width').value) || 0;
@@ -1849,6 +2145,15 @@
             document.getElementById('safety-height').value = '';
             document.getElementById('safety-qty').value = '1';
             calculateSafety();
+        } else if (calcType === 'lighting') {
+            document.getElementById('led-name').value = '';
+            document.getElementById('led-meters').value = '';
+            document.getElementById('led-qty').value = '1';
+            document.getElementById('led-headroom').value = '1.2';
+            document.getElementById('led-trans-environment').value = 'outdoor';
+            document.getElementById('led-trans-mode').value = 'auto';
+            toggleTransMode();
+            calculateLighting();
         } else if (calcType === 'build-own') {
             document.getElementById('byo-name').value = '';
             document.getElementById('byo-width').value = '';
@@ -1892,12 +2197,14 @@
             itemData = calculateCorrex();
         } else if (calcType === 'safety') {
             itemData = calculateSafety();
+        } else if (calcType === 'lighting') {
+            itemData = calculateLighting();
         } else if (calcType === 'build-own') {
             itemData = calculateBuildYourOwn();
         }
 
         if (!itemData || itemData.total <= 0) {
-            alert('Please enter valid dimensions.');
+            alert('Please enter valid quantities or specifications.');
             return;
         }
 
@@ -2021,6 +2328,23 @@
             document.getElementById('safety-qty').value = item.qty;
             calculateSafety();
 
+        } else if (item.calcType === 'lighting') {
+            switchMainTab('lighting');
+            document.getElementById('led-name').value = item.name;
+            document.getElementById('led-type').value = item.ledTypeVal;
+            document.getElementById('led-meters').value = item.meters;
+            document.getElementById('led-qty').value = item.qty;
+            document.getElementById('led-headroom').value = item.safetyFactor;
+            document.getElementById('led-trans-environment').value = item.env;
+            document.getElementById('led-trans-mode').value = item.transMode;
+            toggleTransMode();
+
+            if (item.transMode === 'manual') {
+                if (item.manualTransVal) document.getElementById('led-manual-trans-select').value = item.manualTransVal;
+                if (item.manualTransQty) document.getElementById('led-manual-trans-qty').value = item.manualTransQty;
+            }
+            calculateLighting();
+
         } else if (item.calcType === 'build-own') {
             switchMainTab('build-own');
             document.getElementById('byo-name').value = item.name;
@@ -2087,11 +2411,16 @@
 
         projectItems.forEach(item => {
             subtotal += item.total;
+            const extraDetails = item.calcType === 'lighting' 
+                ? `Transformers: ${item.transDescription} | Load: ${item.requiredWatts.toFixed(1)}W` 
+                : `Dimensions: ${item.dimensions}`;
+
             html += `
                 <div class="cart-item">
                     <div class="cart-item-details">
+                        ${item.calcType === 'lighting' ? '<span class="badge">LIGHTING / LED</span>' : ''}
                         <h4>${item.name} (${item.type})</h4>
-                        <p>Dimensions: ${item.dimensions} | Qty: ${item.qty}</p>
+                        <p>${extraDetails} | Qty: ${item.qty}</p>
                     </div>
                     <div class="cart-item-price">
                         <span class="price">R${item.total.toFixed(2)}</span>
@@ -2134,7 +2463,7 @@
         });
         const grandTotal = vatEnabled ? subtotal * 1.15 : subtotal;
 
-        let emailBody = `Signage Quotation / Estimate\n`;
+        let emailBody = `Signage & Lighting Quotation / Estimate\n`;
         emailBody += `----------------------------------------\n`;
         emailBody += `Project Name: ${projectName}\n`;
         emailBody += `Salesperson: ${salesperson}\n`;
@@ -2143,7 +2472,11 @@
 
         projectItems.forEach((item, index) => {
             emailBody += `${index + 1}. ${item.name} (${item.type})\n`;
-            emailBody += `   - Dimensions: ${item.dimensions}\n`;
+            emailBody += `   - Specifications: ${item.dimensions}\n`;
+            if (item.calcType === 'lighting') {
+                emailBody += `   - Power Req (w/ headroom): ${item.requiredWatts.toFixed(1)} W\n`;
+                emailBody += `   - Transformer Config: ${item.transDescription}\n`;
+            }
             emailBody += `   - Quantity: ${item.qty}\n`;
             emailBody += `   - Item Total: R${item.total.toFixed(2)}\n\n`;
         });
@@ -2159,6 +2492,8 @@
 
     window.onload = function() {
         toggleByoSecondSide();
+        populateManualTransformerDropdown();
+        calculateLighting();
         calculateBuildYourOwn();
     };
 </script>
